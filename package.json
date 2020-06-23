@@ -1,0 +1,9 @@
+{
+  "name": "agendrix-actions-for-github",
+  "version": "1.0.0",
+  "license": "MIT",
+  "dependencies": {
+    "@actions/core": "^1.2.4",
+    "@actions/exec": "^1.0.4"
+  }
+}
