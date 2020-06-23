@@ -23,4 +23,7 @@ steps:
   - run: echo "Contains changes = ${{ steps.diffs.outputs.contains_changes }}"
 ```
 
-Note: `actions/checkout` needs to be @v1 in order to fetch more than one commit in the history.
+## Notes
+
+- `actions/checkout` needs to be @v1 in order to fetch more than one commit in the history.
+- If there is an error while comparing the two commits, this action will assumes there is changes.
