@@ -16,14 +16,16 @@ async function run() {
     const current = core.getInput("current", { required: true });
     const tests = core.getInput("tests", { required: true }).split(/\r?\n| /);
 
-    core.startGroup("Current diffs");
     let diffs;
     try {
+      core.startGroup("Current diffs");
       diffs = await execAsync(`git diff --name-only --diff-filter=AM ${before} ${current}`);
     } catch (_) {
+      core.endGroup();
       return setOutput("Error comparing commits. Assuming changes.", true);
+    } finally {
+      core.endGroup();
     }
-    core.endGroup();
 
     core.startGroup("Files and folders to test");
     core.info(tests.join("\n"));
