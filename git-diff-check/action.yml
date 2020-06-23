@@ -1,0 +1,18 @@
+name: Git Diff Check
+description: Test if git diff contains any of the listed diff.
+inputs:
+  before:
+    description: Referenced commit hash
+    required: true
+  current:
+    description: Commit hash to compare against before
+    required: true
+  tests:
+    description: List of files/folders to test
+    required: true
+outputs:
+  contains_changes:
+    description: Indicates that any of the tested files have changed or not
+runs:
+  using: node12
+  main: main.js
