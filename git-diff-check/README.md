@@ -9,7 +9,8 @@ See [action.yml](./action.yml) for the list of `inputs` and `outputs`.
 ```yaml
 steps:
   - uses: actions/checkout@v1
-  - uses: agendrix/actions/git-diff-check@master
+  - name: Test for changes
+    uses: agendrix/actions/git-diff-check@master
     id: diffs
     with:
       before: ${{ github.event.before }}

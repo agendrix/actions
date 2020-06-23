@@ -7,6 +7,7 @@ See [action.yml](./action.yml) for the list of `inputs` and `outputs`.
 ## Example usage
 
 ```yaml
+name: Use SSH
 uses: agendrix/actions/use-ssh@master
 with:
   ssh-key: ${{ secrets.SSH_KEY }}
