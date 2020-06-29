@@ -1,5 +1,5 @@
-const core = require("@actions/core");
-const execAsync = require("../helpers/execAsync");
+import * as core from "@actions/core";
+import { execAsync } from "../helpers/execAsync";
 
 async function run() {
   try {

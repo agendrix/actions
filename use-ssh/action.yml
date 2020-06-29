@@ -10,5 +10,5 @@ inputs:
     default: "Using default value"
 runs:
   using: node12
-  main: main.js
-  post: cleanup.js
+  main: dist/main.js
+  post: dist/cleanup.js

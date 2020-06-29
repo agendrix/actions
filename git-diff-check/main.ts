@@ -1,11 +1,7 @@
-const core = require("@actions/core");
-const execAsync = require("../helpers/execAsync");
+import * as core from "@actions/core";
+import { execAsync } from "../helpers/execAsync";
 
-/**
- * @param {string} message
- * @param {boolean} containsChanges
- */
-function setOutput(message, containsChanges) {
+function setOutput(message: string, containsChanges: boolean) {
   core.info(message);
   core.setOutput("contains_changes", containsChanges ? "true" : "false");
 }
