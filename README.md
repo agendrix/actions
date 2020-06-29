@@ -1,6 +1,6 @@
 # Agendrix Actions for GitHub
 
-<a href="https://github.com/agendrix/actions/actions"><img alt="typescript-action status" src="https://github.com/agendrix/actions/workflows/build-test/badge.svg"></a>
+<a href="https://github.com/agendrix/actions/actions"><img alt="status" src="https://github.com/agendrix/actions/workflows/build-test/badge.svg"></a>
 
 This repo contains a set of reusable actions for GitHub Workflows.
 
