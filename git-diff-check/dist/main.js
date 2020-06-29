@@ -1582,7 +1582,7 @@ function run() {
             return setOutput("No match found.", false);
         }
         catch (error) {
-            core.setFailed(error);
+            core.setFailed(error.message);
         }
     });
 }
@@ -1613,10 +1613,10 @@ function execAsync(commandLine, args = undefined) {
         return new Promise((resolve, reject) => {
             exec_1.exec(commandLine, args, {
                 listeners: {
-                    stdout: data => resolve(data.toString()),
-                    stderr: data => reject(data.toString()),
+                    stdout: (data) => resolve(data.toString()),
+                    stderr: (data) => reject(data.toString()),
                 },
-            });
+            }).catch((reason) => reject(reason));
         });
     });
 }

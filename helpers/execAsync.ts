@@ -4,9 +4,9 @@ export async function execAsync(commandLine: string, args: string[] | undefined 
   return new Promise((resolve, reject) => {
     exec(commandLine, args, {
       listeners: {
-        stdout: data => resolve(data.toString()),
-        stderr: data => reject(data.toString()),
+        stdout: (data) => resolve(data.toString()),
+        stderr: (data) => reject(data.toString()),
       },
-    });
+    }).catch((reason) => reject(reason));
   });
 }

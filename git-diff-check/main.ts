@@ -34,7 +34,7 @@ async function run() {
     }
     return setOutput("No match found.", false);
   } catch (error) {
-    core.setFailed(error);
+    core.setFailed(error.message);
   }
 }
 
