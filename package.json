@@ -9,7 +9,7 @@
     "git-add-dist": "git add **/dist/*.js"
   },
   "pre-commit": [
-    "build-all",
+    "build-diff",
     "git-add-dist"
   ],
   "dependencies": {
