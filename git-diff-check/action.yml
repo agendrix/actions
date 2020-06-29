@@ -15,4 +15,4 @@ outputs:
     description: Indicates that any of the tested files have changed or not
 runs:
   using: node12
-  main: main.js
+  main: dist/main.js
