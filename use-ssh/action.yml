@@ -4,10 +4,6 @@ inputs:
   ssh-key:
     description: The private SSH key to use
     required: true
-  test:
-    description: Test
-    required: false
-    default: "Using default value"
 runs:
   using: node12
   main: dist/main.js
