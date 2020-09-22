@@ -1,0 +1,22 @@
+name: Workflow Dispatch
+description: Triggers a workflow with the workflow_dispatch event.
+inputs:
+  repo:
+    description: "Name of the repository in which the workflow resides. Defaults to the one in which this action is running."
+    required: false
+  token:
+    description: "Github token."
+    required: true
+  workflow:
+    description: "Name of the workflow file with the extension (ex: workflow.yml)."
+    required: true
+  branch:
+    description: Branch on which to trigger the workflow. Defaults to master.
+    required: true
+    default: "master"
+  inputs:
+    description: workflow_dispatch inputs as JSON.
+    required: false
+runs:
+  using: node12
+  main: dist/main.js

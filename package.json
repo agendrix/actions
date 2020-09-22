@@ -5,7 +5,7 @@
   "scripts": {
     "lint": "eslint **/*.ts",
     "build-all": "node build.js",
-    "build-diff": "node build.js --diff \"$(git diff --name-only)\"",
+    "build-diff": "node build.js --diff \"$(git diff --staged --name-only)\"",
     "git-add-dist": "git add **/dist/*.js"
   },
   "pre-commit": [
@@ -14,7 +14,8 @@
   ],
   "dependencies": {
     "@actions/core": "^1.2.4",
-    "@actions/exec": "^1.0.4"
+    "@actions/exec": "^1.0.4",
+    "@actions/github": "^4.0.0"
   },
   "devDependencies": {
     "@types/node": "^14.0.14",
