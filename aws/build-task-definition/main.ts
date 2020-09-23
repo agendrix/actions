@@ -1,7 +1,6 @@
-const core = require("@actions/core");
-const path = require("path");
-const execAsync = require("../../helpers/execAsync");
-const validateRequiredInputs = require("../../helpers/validateRequiredInputs");
+import * as core from "@actions/core";
+import * as path from "path";
+import { execAsync, validateRequiredInputs } from "../../helpers";
 
 async function run() {
   try {

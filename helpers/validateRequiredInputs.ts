@@ -1,14 +1,11 @@
-const core = require("@actions/core");
+import * as core from "@actions/core";
 
 /**
  * Validate that all required inputs were provided
  * If not, it will throw.
- * @param {string[]} requiredInputs
  */
-async function validateRequiredInputs(requiredInputs) {
+export default function validateRequiredInputs(requiredInputs: Array<string>): void {
   for (const requiredInput of requiredInputs) {
     core.getInput(requiredInput, { required: true });
   }
 }
-
-module.exports = validateRequiredInputs;

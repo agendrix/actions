@@ -953,6 +953,21 @@ class ExecState extends events.EventEmitter {
 
 /***/ }),
 
+/***/ 67:
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.validateRequiredInputs = exports.execAsync = void 0;
+const execAsync_1 = __webpack_require__(878);
+exports.execAsync = execAsync_1.default;
+const validateRequiredInputs_1 = __webpack_require__(761);
+exports.validateRequiredInputs = validateRequiredInputs_1.default;
+
+
+/***/ }),
+
 /***/ 87:
 /***/ (function(module) {
 
@@ -1532,6 +1547,27 @@ module.exports = require("fs");
 
 /***/ }),
 
+/***/ 761:
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const core = __webpack_require__(470);
+/**
+ * Validate that all required inputs were provided
+ * If not, it will throw.
+ */
+function validateRequiredInputs(requiredInputs) {
+    for (const requiredInput of requiredInputs) {
+        core.getInput(requiredInput, { required: true });
+    }
+}
+exports.default = validateRequiredInputs;
+
+
+/***/ }),
+
 /***/ 764:
 /***/ (function(__unusedmodule, exports, __webpack_require__) {
 
@@ -1548,7 +1584,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const core = __webpack_require__(470);
-const execAsync_1 = __webpack_require__(878);
+const helpers_1 = __webpack_require__(67);
 function setOutput(message, containsChanges) {
     core.info(message);
     core.setOutput("contains_changes", containsChanges ? "true" : "false");
@@ -1562,7 +1598,7 @@ function run() {
             let diffs;
             try {
                 core.startGroup("Current diffs");
-                diffs = yield execAsync_1.execAsync(`git diff --name-only --diff-filter=AM ${before} ${current}`);
+                diffs = yield helpers_1.execAsync(`git diff --name-only --diff-filter=AM ${before} ${current}`);
             }
             catch (_) {
                 core.endGroup();
@@ -1606,7 +1642,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.execAsync = void 0;
 const exec_1 = __webpack_require__(986);
 function execAsync(commandLine, args = undefined) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -1620,7 +1655,7 @@ function execAsync(commandLine, args = undefined) {
         });
     });
 }
-exports.execAsync = execAsync;
+exports.default = execAsync;
 
 
 /***/ }),

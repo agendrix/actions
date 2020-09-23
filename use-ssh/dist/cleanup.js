@@ -953,6 +953,21 @@ class ExecState extends events.EventEmitter {
 
 /***/ }),
 
+/***/ 67:
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.validateRequiredInputs = exports.execAsync = void 0;
+const execAsync_1 = __webpack_require__(878);
+exports.execAsync = execAsync_1.default;
+const validateRequiredInputs_1 = __webpack_require__(761);
+exports.validateRequiredInputs = validateRequiredInputs_1.default;
+
+
+/***/ }),
+
 /***/ 87:
 /***/ (function(module) {
 
@@ -976,14 +991,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const core = __webpack_require__(470);
-const execAsync_1 = __webpack_require__(878);
+const helpers_1 = __webpack_require__(67);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            yield execAsync_1.execAsync("ssh-agent -k");
+            yield helpers_1.execAsync("ssh-agent -k");
         }
         catch (error) {
-            core.setFailed(error);
+            core.setFailed(error.message);
         }
     });
 }
@@ -1564,6 +1579,27 @@ module.exports = require("fs");
 
 /***/ }),
 
+/***/ 761:
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const core = __webpack_require__(470);
+/**
+ * Validate that all required inputs were provided
+ * If not, it will throw.
+ */
+function validateRequiredInputs(requiredInputs) {
+    for (const requiredInput of requiredInputs) {
+        core.getInput(requiredInput, { required: true });
+    }
+}
+exports.default = validateRequiredInputs;
+
+
+/***/ }),
+
 /***/ 878:
 /***/ (function(__unusedmodule, exports, __webpack_require__) {
 
@@ -1579,21 +1615,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.execAsync = void 0;
 const exec_1 = __webpack_require__(986);
 function execAsync(commandLine, args = undefined) {
     return __awaiter(this, void 0, void 0, function* () {
         return new Promise((resolve, reject) => {
             exec_1.exec(commandLine, args, {
                 listeners: {
-                    stdout: data => resolve(data.toString()),
-                    stderr: data => reject(data.toString()),
+                    stdout: (data) => resolve(data.toString()),
+                    stderr: (data) => reject(data.toString()),
                 },
-            });
+            }).catch((reason) => reject(reason));
         });
     });
 }
-exports.execAsync = execAsync;
+exports.default = execAsync;
 
 
 /***/ }),
