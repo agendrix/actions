@@ -21,16 +21,23 @@ async function run() {
     const inputs = parseInputs();
 
     core.startGroup("Sending workflow_dispatch event");
+    console.log(owner);
+    console.log(repo);
     const workflows = await octokit.actions.listRepoWorkflows({ owner, repo });
+    console.log(workflows);
     const workflow = workflows.data.workflows.find(
       (workflow) => workflow.path === `.github/workflows/${workflowFileName}`,
     );
+
+    console.log(workflow);
+    console.log(branch);
+    console.log(inputs);
 
     if (workflow) {
       const response = await octokit.actions.createWorkflowDispatch({
         owner,
         repo,
-        workflow_id: workflow?.id,
+        workflow_id: workflow.id,
         ref: branch,
         inputs,
       });
