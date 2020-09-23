@@ -35,6 +35,8 @@ async function run() {
         inputs,
       });
 
+      console.log(response);
+
       if (response.status !== 204) {
         core.setFailed(
           `Action failed. Workflow has not started correctly. Github responded with status ${response.status}`,
