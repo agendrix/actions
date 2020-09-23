@@ -1,0 +1,18 @@
+{
+  "plugins": ["@typescript-eslint"],
+  "parser": "@typescript-eslint/parser",
+  "extends": [],
+  "parserOptions": {
+    "ecmaVersion": 9,
+    "sourceType": "module",
+    "project": "./tsconfig.json"
+  },
+  "rules": {
+    "semi": "off",
+    "@typescript-eslint/semi": ["error"]
+  },
+  "env": {
+    "node": true,
+    "es6": true
+  }
+}

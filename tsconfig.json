@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "rootDir": ".",
+    "strict": true,
+    "noImplicitAny": true,
+    "esModuleInterop": false, /* Not supported by @action/toolkit */
+  },
+  "exclude": ["node_modules", "**/*/dist"],
+}

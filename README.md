@@ -1,5 +1,7 @@
 # Agendrix Actions for GitHub
 
+![Test](https://github.com/agendrix/actions/workflows/Test/badge.svg)
+
 This repo contains a set of reusable actions for GitHub Workflows.
 
 ## Available Actions
@@ -10,7 +12,31 @@ This repo contains a set of reusable actions for GitHub Workflows.
   - [build-and-push-to-ecr](./build-and-push-to-ecr/README.md): Build and Push a Docker image to ECR
   - [build-task-definition](./build-task-definition/README.md): Build a task-definition from merging a given container-definitions JSON file
 
-## Useful Links
+## Developing locally
+
+Install the dependencies
+
+```bash
+$ yarn install
+```
+
+When creating a new TypeScript action, make sure that all your associated scripts in `actions.yml` runs.(pre|main|post) point to `dist/<scriptName>.js`.
+
+The script [`build-all.js`](./build-all.js) will then find the associated `.ts` files within your action folder (`<scriptName>.ts`).
+
+When committing, we use a pre-commit hook to build the code.
+
+### Useful Links
 
 - [Metadata syntax for GitHub Actions](https://help.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions)
 - [Creating a JavaScript action](https://help.github.com/en/actions/creating-actions/creating-a-javascript-action#commit-tag-and-push-your-action-to-github)
+
+### Versioning
+
+After testing you can create a git tag to reference the stable and latest action version.
+
+See the [versioning documentation](https://github.com/actions/toolkit/blob/master/docs/action-versioning.md)
+
+---
+
+Templated from https://github.com/actions/typescript-action.
