@@ -31,4 +31,4 @@ outputs:
     description: The selected tag from the build. It can be either the input `tag` to this action of the tag of an image on ECR with the same digest.
 runs:
   using: node12
-  main: main.js
+  main: dist/main.js
