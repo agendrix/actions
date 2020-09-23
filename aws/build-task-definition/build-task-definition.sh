@@ -38,7 +38,7 @@ if [ -f "$INPUT_SECRETS" ]; then
   container_definitions=$(printf '%s\n' "$container_definitions" | jq --slurpfile secrets "$INPUT_SECRETS" '(.[] | .secrets) = $INPUT_SECRETS[]')
 fi
 
-get_task_definition "${INPUT_CLUSTER}_${INPUT_SERVICE}"
+get_task_definition `echo "${INPUT_CLUSTER}_${INPUT_SERVICE}" | tr - _`
 latest_task_definition=$returned_task_definition
 new_task_definition=$(printf '%s\n' "$latest_task_definition" | jq --argjson container_defs "$container_definitions" '.containerDefinitions = $container_defs')
 
