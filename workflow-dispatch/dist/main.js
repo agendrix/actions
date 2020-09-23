@@ -5686,14 +5686,8 @@ function run() {
             const octokit = github.getOctokit(token);
             const inputs = parseInputs();
             core.startGroup("Sending workflow_dispatch event");
-            console.log(owner);
-            console.log(repo);
             const workflows = yield octokit.actions.listRepoWorkflows({ owner, repo });
-            console.log(workflows);
             const workflow = workflows.data.workflows.find((workflow) => workflow.path === `.github/workflows/${workflowFileName}`);
-            console.log(workflow);
-            console.log(branch);
-            console.log(inputs);
             if (workflow) {
                 const response = yield octokit.actions.createWorkflowDispatch({
                     owner,
