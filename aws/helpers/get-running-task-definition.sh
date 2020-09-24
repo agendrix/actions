@@ -20,11 +20,11 @@ while test $# -gt 0; do
   esac
 done
 
-if [ -z "$cluster" ] || [ -z "$service" ]; then
+if [ -z "${cluster}" ] || [ -z "${service}" ]; then
   echo "One or more options are not set."; exit 1
 fi
 
-aws ecs describe-services --cluster "$cluster" --services "$service" \
+aws ecs describe-services --cluster "${cluster}" --services "${service}" \
   | jq '.services[0].deployments' \
   | jq 'map(select(.desiredCount == .runningCount))' \
   | jq '.[0].taskDefinition' \
