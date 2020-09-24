@@ -33,9 +33,9 @@ set_outputs() {
 
 container_definitions=$(sed "s+<IMAGE>+$INPUT_IMAGE+g;" "$INPUT_CONTAINER_DEFINITIONS_PATH")
 
-if [ -f "$INPUT_SECRETS" ]; then
+if [ -f "$INPUT_SECRETS_PATH" ]; then
   echo "Appending secrets for service $INPUT_SERVICE"
-  container_definitions=$(printf '%s\n' "$container_definitions" | jq --slurpfile secrets "$INPUT_SECRETS" '(.[] | .secrets) = $INPUT_SECRETS[]')
+  container_definitions=$(printf '%s\n' "$container_definitions" | jq --slurpfile secrets "$INPUT_SECRETS_PATH" '(.[] | .secrets) = $INPUT_SECRETS[]')
 fi
 
 get_task_definition `echo "${INPUT_CLUSTER}_${INPUT_SERVICE}" | tr - _`
