@@ -1339,7 +1339,7 @@ function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             helpers_1.validateRequiredInputs(["ecr_registry", "image", "tag"]);
-            yield helpers_1.execAsync(`sh ${path.join(__dirname, "./build-and-push.sh")}`);
+            yield helpers_1.execAsync(`sh ${path.join(__dirname, "../build-and-push.sh")}`);
         }
         catch (error) {
             core.setFailed(error.message);

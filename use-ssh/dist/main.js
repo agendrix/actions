@@ -1339,7 +1339,7 @@ function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             process.env.SSH_KEY = core.getInput("ssh-key", { required: true });
-            yield helpers_1.execAsync(`sh ${path.join(__dirname, "./ssh.sh")}`);
+            yield helpers_1.execAsync(`sh ${path.join(__dirname, "../ssh.sh")}`);
         }
         catch (error) {
             core.setFailed(error.message);
