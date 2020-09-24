@@ -7,6 +7,7 @@ get_task_definition() {
   # Thoses keys are returned by the Amazon ECS DescribeTaskDefinition, but are not valid fields when registering a new task definition
   keys_to_omit=".compatibilities, .taskDefinitionArn, .requiresAttributes, .revision, .status"
 
+  echo "$task_name"
   returned_task_definition=$(aws ecs describe-task-definition --task-definition "${task_name}" | jq .taskDefinition | jq "del($keys_to_omit)")
   if [ -z "${returned_task_definition}" ]; then
     echo "ERROR: aws ecs describe-task-definition returned a bad value."; exit 1
@@ -35,7 +36,7 @@ container_definitions=$(sed "s+<IMAGE>+$INPUT_IMAGE+g;" "$INPUT_CONTAINER_DEFINI
 
 if [ -f "$INPUT_SECRETS_PATH" ]; then
   echo "Appending secrets for service $INPUT_SERVICE"
-  container_definitions=$(printf '%s\n' "$container_definitions" | jq --slurpfile secrets "$INPUT_SECRETS_PATH" '(.[] | .secrets) = $INPUT_SECRETS[]')
+  container_definitions=$(printf '%s\n' "$container_definitions" | jq --slurpfile secrets "$INPUT_SECRETS_PATH" '(.[] | .secrets) = $INPUT_SECRETS_PATH[]')
 fi
 
 get_task_definition `echo "${INPUT_CLUSTER}_${INPUT_SERVICE}" | tr - _`
