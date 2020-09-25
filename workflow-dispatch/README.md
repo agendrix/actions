@@ -2,7 +2,7 @@
 
 Trigger a workflow run with the workflow_dispatch event.
 
-See [action.yml](./action.yml) for the list of `inputs` and `outputs`.
+See [action.yml](./action.yml) for the list of `inputs`.
 
 ## Example usage
 
@@ -11,9 +11,8 @@ steps:
   - uses: actions/checkout@v2
   - name: Trigger my workflow
     uses: agendrix/actions/workflow-dispatch@master
-    id: trigger-workflow
     with:
-      token: ${{ secrets.MY_PAC }}
+      token: ${{ secrets.GITHUB_PERSONAL_ACCESS_TOKEN }}
       workflow: "my-workflow.yml"
       inputs: '{ "key": "value", "another_key": true }'
 ```

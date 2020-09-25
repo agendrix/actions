@@ -1,5 +1,6 @@
 import * as core from "@actions/core";
 import * as github from "@actions/github";
+import { send } from "process";
 
 function parseInputs() {
   try {
@@ -16,42 +17,52 @@ async function run() {
     const owner = core.getInput("owner") || workflowOwner;
     const repo = core.getInput("repository") || workflowRepo;
     const workflowFileName = core.getInput("workflow", { required: true });
-    const ref = core.getInput("ref") || "master";
+    const ref = core.getInput("ref") || "main";
     const token = core.getInput("token", { required: true });
     const inputs = parseInputs();
-
-    core.startGroup("Fetching workflow_id for the requested workflow");
     const octokit = github.getOctokit(token);
-    const workflows = await octokit.actions.listRepoWorkflows({ owner, repo });
-    const workflow = workflows.data.workflows.find(
-      (workflow) => workflow.path === `.github/workflows/${workflowFileName}`,
-    );
-    core.endGroup();
 
-    if (workflow) {
+    const fetchWorkflow = async () => {
+      core.startGroup("Fetching workflow_id for the requested workflow");
+      const workflows = await octokit.actions.listRepoWorkflows({ owner, repo });
+      const workflow = workflows.data.workflows.find(
+        (workflow) => workflow.path === `.github/workflows/${workflowFileName}`,
+      );
+      core.endGroup();
+
+      return workflow;
+    };
+
+    const sendWorkflowDispatchEvent = async (workflow_id: number) => {
       core.startGroup("Sending workflow dispatch event");
       const response = await octokit.actions.createWorkflowDispatch({
         owner,
         repo,
-        workflow_id: workflow.id,
+        workflow_id,
         ref,
         inputs,
       });
+      core.endGroup();
 
+      return response;
+    };
+
+    const workflow = await fetchWorkflow();
+
+    if (workflow) {
+      const response = await sendWorkflowDispatchEvent(workflow.id);
       if (response.status !== 204) {
-        core.setFailed(
+        throw new Error(
           `Action failed. Workflow has not started correctly. Github responded with status ${response.status}`,
         );
       }
     } else {
-      core.setFailed(
+      throw new Error(
         `Action failed. Could not find a workflow with ${workflowFileName} in the repo named ${repo} owned by ${owner}`,
       );
     }
   } catch (error) {
     core.setFailed(error.message);
-  } finally {
-    core.endGroup();
   }
 }
 
