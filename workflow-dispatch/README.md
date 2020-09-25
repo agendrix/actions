@@ -13,7 +13,7 @@ steps:
     uses: agendrix/actions/workflow-dispatch@master
     id: trigger-workflow
     with:
-      token: ${{ secrets.GITHUB_TOKEN }}
+      token: ${{ secrets.MY_PAC }}
       workflow: "my-workflow.yml"
       inputs: '{ "key": "value", "another_key": true }'
 ```
