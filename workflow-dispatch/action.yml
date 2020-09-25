@@ -8,7 +8,7 @@ inputs:
     description: "Name of the repository in which the workflow resides. Defaults to the one in which the workflow currently running resides."
     required: false
   token:
-    description: "Github token. Cannot be ${{ secrets.GITHUB_TOKEN }} provided in the worflow run."
+    description: "Github token. Cannot be the default github token provided in the worflow run."
     required: true
   workflow:
     description: "Name of the workflow file with the extension (ex: workflow.yml)."
