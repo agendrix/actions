@@ -5678,31 +5678,33 @@ function parseInputs() {
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const { owner, repo: workflowRepo } = github.context.repo;
+            const { owner: workflowOwner, repo: workflowRepo } = github.context.repo;
+            const owner = core.getInput("owner") || workflowOwner;
             const repo = core.getInput("repository") || workflowRepo;
             const workflowFileName = core.getInput("workflow", { required: true });
-            const branch = core.getInput("branch") || "master";
+            const ref = core.getInput("ref") || "master";
             const token = core.getInput("token", { required: true });
-            const octokit = github.getOctokit(token);
             const inputs = parseInputs();
-            core.startGroup("Sending workflow_dispatch event");
+            core.startGroup("Fetching workflow_id for the requested workflow");
+            const octokit = github.getOctokit(token);
             const workflows = yield octokit.actions.listRepoWorkflows({ owner, repo });
             const workflow = workflows.data.workflows.find((workflow) => workflow.path === `.github/workflows/${workflowFileName}`);
+            core.endGroup();
             if (workflow) {
+                core.startGroup("Sending workflow dispatch event");
                 const response = yield octokit.actions.createWorkflowDispatch({
                     owner,
                     repo,
                     workflow_id: workflow.id,
-                    ref: branch,
+                    ref,
                     inputs,
                 });
-                console.log(response);
                 if (response.status !== 204) {
                     core.setFailed(`Action failed. Workflow has not started correctly. Github responded with status ${response.status}`);
                 }
             }
             else {
-                core.setFailed(`Action failed. Could not find a workflow with ${workflowFileName} in the repo named ${repo}`);
+                core.setFailed(`Action failed. Could not find a workflow with ${workflowFileName} in the repo named ${repo} owned by ${owner}`);
             }
         }
         catch (error) {

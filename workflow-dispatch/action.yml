@@ -1,8 +1,11 @@
 name: Workflow Dispatch
 description: Triggers a workflow with the workflow_dispatch event.
 inputs:
+  owner:
+    description: "Name of the repository owner in which the workflow resides. Defaults to the one who owns the workflow in which this action is running."
+    required: false
   repo:
-    description: "Name of the repository in which the workflow resides. Defaults to the one in which this action is running."
+    description: "Name of the repository in which the workflow resides. Defaults to the one in which the workflow currently running resides."
     required: false
   token:
     description: "Github token."
@@ -10,8 +13,8 @@ inputs:
   workflow:
     description: "Name of the workflow file with the extension (ex: workflow.yml)."
     required: true
-  branch:
-    description: Branch on which to trigger the workflow. Defaults to master.
+  ref:
+    description: "The reference of the workflow run. The reference can be a branch, tag, or a commit SHA. Defaults to master."
     required: true
     default: "master"
   inputs:

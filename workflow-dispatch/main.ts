@@ -12,30 +12,31 @@ function parseInputs() {
 
 async function run() {
   try {
-    const { owner, repo: workflowRepo } = github.context.repo;
+    const { owner: workflowOwner, repo: workflowRepo } = github.context.repo;
+    const owner = core.getInput("owner") || workflowOwner;
     const repo = core.getInput("repository") || workflowRepo;
     const workflowFileName = core.getInput("workflow", { required: true });
-    const branch = core.getInput("branch") || "master";
+    const ref = core.getInput("ref") || "master";
     const token = core.getInput("token", { required: true });
-    const octokit = github.getOctokit(token);
     const inputs = parseInputs();
 
-    core.startGroup("Sending workflow_dispatch event");
+    core.startGroup("Fetching workflow_id for the requested workflow");
+    const octokit = github.getOctokit(token);
     const workflows = await octokit.actions.listRepoWorkflows({ owner, repo });
     const workflow = workflows.data.workflows.find(
       (workflow) => workflow.path === `.github/workflows/${workflowFileName}`,
     );
+    core.endGroup();
 
     if (workflow) {
+      core.startGroup("Sending workflow dispatch event");
       const response = await octokit.actions.createWorkflowDispatch({
         owner,
         repo,
         workflow_id: workflow.id,
-        ref: branch,
+        ref,
         inputs,
       });
-
-      console.log(response);
 
       if (response.status !== 204) {
         core.setFailed(
@@ -43,7 +44,9 @@ async function run() {
         );
       }
     } else {
-      core.setFailed(`Action failed. Could not find a workflow with ${workflowFileName} in the repo named ${repo}`);
+      core.setFailed(
+        `Action failed. Could not find a workflow with ${workflowFileName} in the repo named ${repo} owned by ${owner}`,
+      );
     }
   } catch (error) {
     core.setFailed(error.message);
