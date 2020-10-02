@@ -49,7 +49,7 @@ if [ -n "$CURRENT_STABLE_TASKDEF_ARN" ]; then
   keys_to_omit=".compatibilities, .taskDefinitionArn, .requiresAttributes, .revision, .status"
 
   echo "$CURRENT_STABLE_TASKDEF_ARN"
-  returned_task_definition=$(aws ecs describe-task-definition --task-definition "arn:aws:ecs:ca-central-1:268127068934:task-definition/dev_portal_nginx:62" | jq .taskDefinition | jq "del($keys_to_omit)")
+  returned_task_definition=$(aws ecs describe-task-definition --task-definition "arn:aws:ecs:ca-central-1:268127068934:task-definition/dev_portal_nginx:63" | jq .taskDefinition | jq "del($keys_to_omit)")
   if [ -z "${returned_task_definition}" ]; then
     echo "ERROR: aws ecs describe-task-definition returned a bad value."; exit 1
   fi
