@@ -7,7 +7,7 @@ get_task_definition() {
   # Thoses keys are returned by the Amazon ECS DescribeTaskDefinition, but are not valid fields when registering a new task definition
   keys_to_omit=".compatibilities, .taskDefinitionArn, .requiresAttributes, .revision, .status"
 
-  returned_task_definition=$(aws ecs describe-task-definition --task-definition $("$task_name") | jq .taskDefinition | jq "del($keys_to_omit)")
+  returned_task_definition=$(aws ecs describe-task-definition --task-definition "${task_name}" | jq .taskDefinition | jq "del($keys_to_omit)")
   if [ -z "${returned_task_definition}" ]; then
     echo "ERROR: aws ecs describe-task-definition returned a bad value."; exit 1
   fi
@@ -43,7 +43,7 @@ latest_task_definition=$returned_task_definition
 new_task_definition=$(printf '%s\n' "$latest_task_definition" | jq --argjson container_defs "$container_definitions" '.containerDefinitions = $container_defs')
 
 if [ -n "$CURRENT_STABLE_TASKDEF_ARN" ]; then
-  get_task_definition `echo "${INPUT_CLUSTER}_${INPUT_SERVICE}" | tr "\\n" ""`
+  get_task_definition `echo "${CURRENT_STABLE_TASKDEF_ARN}" | tr  -d '\\n'`
   current_stable_taskdef="$returned_task_definition"
 
   current_tmp="$(mktemp)"; printf '%s\n' "$current_stable_taskdef" | jq -S . > "$current_tmp"
