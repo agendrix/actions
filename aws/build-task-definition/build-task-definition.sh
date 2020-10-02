@@ -31,7 +31,6 @@ set_outputs() {
   fi
 }
 
-echo "Script starting"
 container_definitions=$(sed "s+<IMAGE>+$INPUT_IMAGE+g;" "$INPUT_CONTAINER_DEFINITIONS_PATH")
 
 if [ -f "$INPUT_SECRETS_PATH" ]; then
@@ -39,7 +38,6 @@ if [ -f "$INPUT_SECRETS_PATH" ]; then
   container_definitions=$(printf '%s\n' "$container_definitions" | jq --slurpfile secrets "$INPUT_SECRETS_PATH" '(.[] | .secrets) = $INPUT_SECRETS_PATH[]')
 fi
 
-echo "First call get task definition"
 get_task_definition `echo "${INPUT_CLUSTER}_${INPUT_SERVICE}" | tr - _`
 latest_task_definition=$returned_task_definition
 new_task_definition=$(printf '%s\n' "$latest_task_definition" | jq --argjson container_defs "$container_definitions" '.containerDefinitions = $container_defs')
@@ -50,9 +48,8 @@ if [ -n "$CURRENT_STABLE_TASKDEF_ARN" ]; then
   # Thoses keys are returned by the Amazon ECS DescribeTaskDefinition, but are not valid fields when registering a new task definition
   keys_to_omit=".compatibilities, .taskDefinitionArn, .requiresAttributes, .revision, .status"
 
-  echo "Debug describe-task-definition"
-  echo $(aws ecs describe-task-definition --task-definition "arn:aws:ecs:ca-central-1:268127068934:task-definition/dev_portal_nginx:62" --debug)
-  returned_task_definition=$(aws ecs describe-task-definition --task-definition "arn:aws:ecs:ca-central-1:268127068934:task-definition/dev_portal_nginx:62" --debug | jq .taskDefinition | jq "del($keys_to_omit)")
+  echo "$CURRENT_STABLE_TASKDEF_ARN"
+  returned_task_definition=$(aws ecs describe-task-definition --task-definition "arn:aws:ecs:ca-central-1:268127068934:task-definition/dev_portal_nginx:62" | jq .taskDefinition | jq "del($keys_to_omit)")
   if [ -z "${returned_task_definition}" ]; then
     echo "ERROR: aws ecs describe-task-definition returned a bad value."; exit 1
   fi
