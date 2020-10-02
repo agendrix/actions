@@ -26,9 +26,9 @@ set_outputs() {
   echo "::set-output name=path::$output_path"
 
   if [ -n "$running_stable_task_definition" ]; then
-    stable_output_path="/tmp/task-definition.$INPUT_SERVICE.stable.json"
+    stable_output_path="/tmp/task-definition.stable.json"
     printf '%s\n' "$running_stable_task_definition" > "$stable_output_path"
-    echo "::set-output name=current_task_definition_path::$stable_output_path"
+    echo "::set-output name=current_stable_task_definition_path::$stable_output_path"
   fi
 }
 
@@ -45,13 +45,19 @@ new_task_definition=$(printf '%s\n' "$latest_task_definition" | jq --argjson con
 
 if [ -n "$CURRENT_STABLE_TASKDEF_ARN" ]; then
   get_task_definition "$CURRENT_STABLE_TASKDEF_ARN"
-  current_stable_taskdef="$returned_task_definition"
+  # Thoses keys are returned by the Amazon ECS DescribeTaskDefinition, but are not valid fields when registering a new task definition
+  keys_to_omit=".compatibilities, .taskDefinitionArn, .requiresAttributes, .revision, .status"
+
+  returned_task_definition=$(aws ecs describe-task-definition --task-definition "arn:aws:ecs:ca-central-1:268127068934:task-definition/dev_portal_nginx:62" | jq .taskDefinition | jq "del($keys_to_omit)")
+  if [ -z "${returned_task_definition}" ]; then
+    echo "ERROR: aws ecs describe-task-definition returned a bad value."; exit 1
+  fi
 
   current_tmp="$(mktemp)"; printf '%s\n' "$current_stable_taskdef" | jq -S . > "$current_tmp"
   new_tmp="$(mktemp)";     printf '%s\n' "$new_task_definition"    | jq -S . > "$new_tmp"
 
   if cmp -s "$current_tmp" "$new_tmp"; then
-    echo "The task definition has not changed. Deployment should be skipped."
+    echo "The task definition has not changed. Deployment will be skipped."
     set_outputs "false" "$latest_task_definition" "$current_stable_taskdef"
     exit 0
   else
