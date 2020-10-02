@@ -48,6 +48,7 @@ if [ -n "$CURRENT_STABLE_TASKDEF_ARN" ]; then
   # Thoses keys are returned by the Amazon ECS DescribeTaskDefinition, but are not valid fields when registering a new task definition
   keys_to_omit=".compatibilities, .taskDefinitionArn, .requiresAttributes, .revision, .status"
 
+  echo "hi?"
   echo $(aws ecs describe-task-definition --task-definition "arn:aws:ecs:ca-central-1:268127068934:task-definition/dev_portal_nginx:62" --debug)
   returned_task_definition=$(aws ecs describe-task-definition --task-definition "arn:aws:ecs:ca-central-1:268127068934:task-definition/dev_portal_nginx:62" --debug | jq .taskDefinition | jq "del($keys_to_omit)")
   if [ -z "${returned_task_definition}" ]; then
