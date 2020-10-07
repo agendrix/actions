@@ -953,21 +953,6 @@ class ExecState extends events.EventEmitter {
 
 /***/ }),
 
-/***/ 67:
-/***/ (function(__unusedmodule, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateRequiredInputs = exports.execAsync = void 0;
-const execAsync_1 = __webpack_require__(878);
-exports.execAsync = execAsync_1.default;
-const validateRequiredInputs_1 = __webpack_require__(761);
-exports.validateRequiredInputs = validateRequiredInputs_1.default;
-
-
-/***/ }),
-
 /***/ 87:
 /***/ (function(module) {
 
@@ -999,15 +984,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const core = __webpack_require__(470);
 const path = __webpack_require__(622);
-const helpers_1 = __webpack_require__(67);
+const execAsync_1 = __webpack_require__(878);
+const validateRequiredInputs_1 = __webpack_require__(761);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            helpers_1.validateRequiredInputs(["cluster", "service", "container_definitions_path"]);
+            validateRequiredInputs_1.default(["cluster", "service", "container_definitions_path"]);
             const cluster = core.getInput("cluster", { required: true });
             const service = core.getInput("service", { required: true });
-            process.env.CURRENT_STABLE_TASKDEF_ARN = yield helpers_1.execAsync(`sh ${path.join(__dirname, "../../helpers/get-running-task-definition.sh")} --cluster "${cluster}" --service "${service}"`);
-            yield helpers_1.execAsync(`sh ${path.join(__dirname, "../build-task-definition.sh")}`);
+            const getRunningTaskDefinitionScript = path.join(__dirname, "../../helpers/get-running-task-definition.sh");
+            process.env.CURRENT_STABLE_TASKDEF_ARN = yield execAsync_1.default(`sh ${getRunningTaskDefinitionScript} --cluster "${cluster}" --service "${service}"`);
+            yield execAsync_1.default(`sh ${path.join(__dirname, "../build-task-definition.sh")}`);
         }
         catch (error) {
             core.setFailed(error.message);
