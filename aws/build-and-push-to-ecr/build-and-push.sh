@@ -55,7 +55,7 @@ if [ "$latest_tag_available" = "true" ]; then
   docker build \
     --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from "$INPUT_ECR_REGISTRY/$INPUT_IMAGE:latest" \
     --tag "$INPUT_ECR_REGISTRY/$INPUT_IMAGE:$INPUT_TAG" \
-    "$INPUT_ARGS" -f "$file" \
+    $INPUT_ARGS -f "$file" \
     "$INPUT_PATH";
   echo "::endgroup::"
 
@@ -64,7 +64,7 @@ else
   echo "::group::Building new image"
   docker build \
     --tag "$INPUT_ECR_REGISTRY/$INPUT_IMAGE:$INPUT_TAG" \
-    "$INPUT_ARGS" -f "$file" \
+    $INPUT_ARGS -f "$file" \
     "$INPUT_PATH";
   echo "::endgroup::"
 fi
