@@ -1,6 +1,7 @@
 import * as core from "@actions/core";
 import * as path from "path";
-import { execAsync, validateRequiredInputs } from "../../helpers";
+import execAsync from "../../helpers/execAsync";
+import validateRequiredInputs from "../../helpers/validateRequiredInputs";
 
 async function run() {
   try {

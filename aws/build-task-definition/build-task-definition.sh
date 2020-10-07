@@ -38,12 +38,13 @@ if [ -f "$INPUT_SECRETS_PATH" ]; then
   container_definitions=$(printf '%s\n' "$container_definitions" | jq --slurpfile secrets "$INPUT_SECRETS_PATH" '(.[] | .secrets) = $INPUT_SECRETS_PATH[]')
 fi
 
-get_task_definition `echo "${INPUT_CLUSTER}_${INPUT_SERVICE}" | tr - _`
+get_task_definition "$(echo "${INPUT_CLUSTER}_${INPUT_SERVICE}" | tr - _)"
 latest_task_definition=$returned_task_definition
 new_task_definition=$(printf '%s\n' "$latest_task_definition" | jq --argjson container_defs "$container_definitions" '.containerDefinitions = $container_defs')
 
 if [ -n "$CURRENT_STABLE_TASKDEF_ARN" ]; then
-  get_task_definition `echo "${CURRENT_STABLE_TASKDEF_ARN}" | tr  -d '\\n'`
+  # get_task_definition `echo "${CURRENT_STABLE_TASKDEF_ARN}" | tr  -d '\\n'`
+  get_task_definition "${CURRENT_STABLE_TASKDEF_ARN}"
   current_stable_taskdef="$returned_task_definition"
 
   current_tmp="$(mktemp)"; printf '%s\n' "$current_stable_taskdef" | jq -S . > "$current_tmp"

@@ -1,6 +1,6 @@
 import * as core from "@actions/core";
 import * as path from "path";
-import { execAsync } from "../helpers";
+import execAsync from "../helpers/execAsync";
 
 async function run() {
   try {

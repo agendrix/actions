@@ -1,5 +1,5 @@
 import * as core from "@actions/core";
-import { execAsync } from "../helpers";
+import execAsync from "../helpers/execAsync";
 
 function setOutput(message: string, containsChanges: boolean) {
   core.info(message);

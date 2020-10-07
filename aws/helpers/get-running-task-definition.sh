@@ -28,4 +28,5 @@ aws ecs describe-services --cluster "${cluster}" --services "${service}" \
   | jq '.services[0].deployments' \
   | jq 'map(select(.desiredCount == .runningCount))' \
   | jq '.[0].taskDefinition' \
-  | jq -r 'select(. != null)'
+  | jq -r 'select(. != null)' \
+  | tr -d '\\n'
