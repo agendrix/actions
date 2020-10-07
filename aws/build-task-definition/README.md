@@ -7,26 +7,30 @@ See [action.yml](./action.yml) for the list of `inputs` and `outputs`.
 ## Example usage
 
 ```yaml
-strategy:
-  matrix:
-    service: [app, cache]
+deploy-app-cache:
+  name: Deploy app & cache
+  runs-on: ubuntu-latest
 
-steps:
-  - name: Checkout
-    uses: actions/checkout@v2
+  strategy:
+    matrix:
+      service: [app, cache]
 
-  - name: Configure AWS credentials
-    uses: aws-actions/configure-aws-credentials@v1
-    with:
-      aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      aws-region: ${{ env.AWS_REGION }}
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v2
 
-  - name: Create ${{ matrix.service }} task definition
-    id: task-definition
-    run: sh .github/actions/aws/build-task-definition.sh
-    env:
-      cluster: ${{ env.CLUSTER_NAME }}
-      service: ${{ matrix.service }}
-      container_definitions_path: container-definitions/${{ matrix.service }}.json
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Create ${{ matrix.service }} task definition
+      id: task-definition
+      run: sh .github/actions/aws/build-task-definition.sh
+      env:
+        cluster: ${{ env.CLUSTER_NAME }}
+        service: ${{ matrix.service }}
+        container_definitions_path: container-definitions/${{ matrix.service }}.json
 ```
