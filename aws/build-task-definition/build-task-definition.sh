@@ -43,9 +43,8 @@ latest_task_definition=$returned_task_definition
 new_task_definition=$(printf '%s\n' "$latest_task_definition" | jq --argjson container_defs "$container_definitions" '.containerDefinitions = $container_defs')
 
 if [ -n "$CURRENT_STABLE_TASKDEF_ARN" ]; then
-  # The variable has a trailing '\\n' - probably because it is stored as an environnement variable
-  echo "${CURRENT_STABLE_TASKDEF_ARN}"
-  get_task_definition "$(echo "${CURRENT_STABLE_TASKDEF_ARN}" | tr  -d '\\n')"
+  # The variable has a trailing '\\n' - probably because it is stored as an environnement variable.
+  get_task_definition "$(echo "${CURRENT_STABLE_TASKDEF_ARN}" | tr  -d '\n')"
   current_stable_taskdef="$returned_task_definition"
 
   current_tmp="$(mktemp)"; printf '%s\n' "$current_stable_taskdef" | jq -S . > "$current_tmp"
