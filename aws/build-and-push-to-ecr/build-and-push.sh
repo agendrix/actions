@@ -39,6 +39,7 @@ compare_digest_with_latest() {
       docker tag "$INPUT_ECR_REGISTRY/$INPUT_IMAGE:latest" "$INPUT_ECR_REGISTRY/$INPUT_IMAGE:$latest_tag_version"
       docker tag "$INPUT_ECR_REGISTRY/$INPUT_IMAGE:latest" "$INPUT_IMAGE:$latest_tag_version"
       set_outputs "$INPUT_IMAGE" "$latest_tag_version"
+      exit 0
     fi
   fi
 }
@@ -66,16 +67,16 @@ else
     "$INPUT_ARGS" -f "$file" \
     "$INPUT_PATH";
   echo "::endgroup::"
-
-  echo "::group::Pushing new image to ECR"
-  docker tag "$INPUT_ECR_REGISTRY/$INPUT_IMAGE:$INPUT_TAG" "$INPUT_ECR_REGISTRY/$INPUT_IMAGE:latest"
-  docker tag "$INPUT_ECR_REGISTRY/$INPUT_IMAGE:$INPUT_TAG" "$INPUT_IMAGE:latest"
-  docker push "$INPUT_ECR_REGISTRY/$INPUT_IMAGE:$INPUT_TAG"
-  docker push "$INPUT_ECR_REGISTRY/$INPUT_IMAGE:latest"
-  echo "::endgroup::"
-
-  set_outputs "$INPUT_IMAGE" "$INPUT_TAG"
 fi
+
+echo "::group::Pushing new image to ECR"
+docker tag "$INPUT_ECR_REGISTRY/$INPUT_IMAGE:$INPUT_TAG" "$INPUT_ECR_REGISTRY/$INPUT_IMAGE:latest"
+docker tag "$INPUT_ECR_REGISTRY/$INPUT_IMAGE:$INPUT_TAG" "$INPUT_IMAGE:latest"
+docker push "$INPUT_ECR_REGISTRY/$INPUT_IMAGE:$INPUT_TAG"
+docker push "$INPUT_ECR_REGISTRY/$INPUT_IMAGE:latest"
+echo "::endgroup::"
+
+set_outputs "$INPUT_IMAGE" "$INPUT_TAG"
 
 
 
