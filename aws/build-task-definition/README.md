@@ -7,7 +7,7 @@ See [action.yml](./action.yml) for the list of `inputs` and `outputs`.
 ## Example usage
 
 ```yaml
-deploy-app-cache:
+deploy-app-cache-job:
   name: Deploy app & cache
   runs-on: ubuntu-latest
 
