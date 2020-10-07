@@ -77,7 +77,3 @@ docker push "$INPUT_ECR_REGISTRY/$INPUT_IMAGE:latest"
 echo "::endgroup::"
 
 set_outputs "$INPUT_IMAGE" "$INPUT_TAG"
-
-
-
-
