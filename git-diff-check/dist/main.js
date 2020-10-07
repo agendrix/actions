@@ -1562,7 +1562,7 @@ function run() {
             let diffs;
             try {
                 core.startGroup("Current diffs");
-                diffs = yield execAsync_1.default(`git diff --name-only --diff-filter=AM ${before} ${current}`);
+                diffs = yield execAsync_1.execAsync(`git diff --name-only --diff-filter=AM ${before} ${current}`);
             }
             catch (_) {
                 core.endGroup();
@@ -1606,6 +1606,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.execAsync = void 0;
 const exec_1 = __webpack_require__(986);
 function execAsync(commandLine, args = undefined) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -1619,7 +1620,7 @@ function execAsync(commandLine, args = undefined) {
         });
     });
 }
-exports.default = execAsync;
+exports.execAsync = execAsync;
 
 
 /***/ }),

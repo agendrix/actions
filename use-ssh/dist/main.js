@@ -1324,7 +1324,7 @@ function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             process.env.SSH_KEY = core.getInput("ssh-key", { required: true });
-            yield execAsync_1.default(`sh ${path.join(__dirname, "../ssh.sh")}`);
+            yield execAsync_1.execAsync(`sh ${path.join(__dirname, "../ssh.sh")}`);
         }
         catch (error) {
             core.setFailed(error.message);
@@ -1581,6 +1581,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.execAsync = void 0;
 const exec_1 = __webpack_require__(986);
 function execAsync(commandLine, args = undefined) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -1594,7 +1595,7 @@ function execAsync(commandLine, args = undefined) {
         });
     });
 }
-exports.default = execAsync;
+exports.execAsync = execAsync;
 
 
 /***/ }),

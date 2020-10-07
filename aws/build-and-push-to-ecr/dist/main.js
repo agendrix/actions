@@ -1324,8 +1324,8 @@ const validateRequiredInputs_1 = __webpack_require__(761);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            validateRequiredInputs_1.default(["ecr_registry", "image", "tag"]);
-            yield execAsync_1.default(`sh ${path.join(__dirname, "../build-and-push.sh")}`);
+            validateRequiredInputs_1.validateRequiredInputs(["ecr_registry", "image", "tag"]);
+            yield execAsync_1.execAsync(`sh ${path.join(__dirname, "../build-and-push.sh")}`);
         }
         catch (error) {
             core.setFailed(error.message);
@@ -1573,6 +1573,7 @@ module.exports = require("fs");
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.validateRequiredInputs = void 0;
 const core = __webpack_require__(470);
 /**
  * Validate that all required inputs were provided
@@ -1583,7 +1584,7 @@ function validateRequiredInputs(requiredInputs) {
         core.getInput(requiredInput, { required: true });
     }
 }
-exports.default = validateRequiredInputs;
+exports.validateRequiredInputs = validateRequiredInputs;
 
 
 /***/ }),
@@ -1603,6 +1604,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.execAsync = void 0;
 const exec_1 = __webpack_require__(986);
 function execAsync(commandLine, args = undefined) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -1616,7 +1618,7 @@ function execAsync(commandLine, args = undefined) {
         });
     });
 }
-exports.default = execAsync;
+exports.execAsync = execAsync;
 
 
 /***/ }),
