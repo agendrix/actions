@@ -43,8 +43,8 @@ compare_digest_with_latest() {
   fi
 }
 
-image_repo_is_empty=$(aws ecr list-images --repository-name "$INPUT_IMAGE" | jq '.imageIds | length == 0')
-if [ "$image_repo_is_empty" = "false" ]; then
+images_repo_is_not_empty=$(aws ecr list-images --repository-name "$INPUT_IMAGE" | jq '.imageIds | select(.imageTag=="latest") | length > 0')
+if [ "$images_repo_is_not_empty" = "true" ]; then
   echo "::group::Pulling \"$INPUT_IMAGE:latest\""
   docker pull "$INPUT_ECR_REGISTRY/$INPUT_IMAGE:latest"
   docker tag "$INPUT_ECR_REGISTRY/$INPUT_IMAGE:latest" "$INPUT_IMAGE:latest"
