@@ -43,7 +43,7 @@ compare_digest_with_latest() {
   fi
 }
 
-latest_tag_available =$(aws ecr list-images --repository-name "$INPUT_IMAGE" | jq '.imageIds[] | select(.imageTag=="latest") | length > 0')
+latest_tag_available=$(aws ecr list-images --repository-name "$INPUT_IMAGE" | jq '.imageIds[] | select(.imageTag=="latest") | length > 0')
 if [ "$latest_tag_available" = "true" ]; then
   echo "::group::Pulling \"$INPUT_IMAGE:latest\""
   docker pull "$INPUT_ECR_REGISTRY/$INPUT_IMAGE:latest"
