@@ -76,7 +76,3 @@ else
 
   set_outputs "$INPUT_IMAGE" "$INPUT_TAG"
 fi
-
-
-
-
