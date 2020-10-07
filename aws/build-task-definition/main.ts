@@ -8,11 +8,10 @@ async function run() {
 
     const cluster = core.getInput("cluster", { required: true });
     const service = core.getInput("service", { required: true });
+    const getRunningTaskDefinitionScript = path.join(__dirname, "../../helpers/get-running-task-definition.sh");
+
     process.env.CURRENT_STABLE_TASKDEF_ARN = await execAsync(
-      `sh ${path.join(
-        __dirname,
-        "../../helpers/get-running-task-definition.sh",
-      )} --cluster "${cluster}" --service "${service}"`,
+      `sh ${getRunningTaskDefinitionScript} --cluster "${cluster}" --service "${service}"`,
     );
 
     await execAsync(`sh ${path.join(__dirname, "../build-task-definition.sh")}`);
