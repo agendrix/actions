@@ -40,7 +40,7 @@ module.exports =
 /******/ 	// the startup function
 /******/ 	function startup() {
 /******/ 		// Load entry module and return exports
-/******/ 		return __webpack_require__(597);
+/******/ 		return __webpack_require__(577);
 /******/ 	};
 /******/
 /******/ 	// run startup
@@ -1302,7 +1302,7 @@ exports.getState = getState;
 
 /***/ }),
 
-/***/ 597:
+/***/ 577:
 /***/ (function(__unusedmodule, exports, __webpack_require__) {
 
 "use strict";
@@ -1320,11 +1320,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core = __webpack_require__(470);
 const path = __webpack_require__(622);
 const execAsync_1 = __webpack_require__(878);
+const validateRequiredInputs_1 = __webpack_require__(761);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            process.env.SSH_KEY = core.getInput("ssh-key", { required: true });
-            yield execAsync_1.execAsync(`sh ${path.join(__dirname, "../ssh.sh")}`);
+            validateRequiredInputs_1.validateRequiredInputs(["ecr_registry", "image", "tag"]);
+            yield execAsync_1.execAsync(`sh ${path.join(__dirname, "../build-and-push.sh")}`);
         }
         catch (error) {
             core.setFailed(error.message);
@@ -1563,6 +1564,28 @@ function isUnixExecutable(stats) {
 /***/ (function(module) {
 
 module.exports = require("fs");
+
+/***/ }),
+
+/***/ 761:
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.validateRequiredInputs = void 0;
+const core = __webpack_require__(470);
+/**
+ * Validate that all required inputs were provided
+ * If not, it will throw.
+ */
+function validateRequiredInputs(requiredInputs) {
+    for (const requiredInput of requiredInputs) {
+        core.getInput(requiredInput, { required: true });
+    }
+}
+exports.validateRequiredInputs = validateRequiredInputs;
+
 
 /***/ }),
 

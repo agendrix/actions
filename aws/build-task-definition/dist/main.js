@@ -40,7 +40,7 @@ module.exports =
 /******/ 	// the startup function
 /******/ 	function startup() {
 /******/ 		// Load entry module and return exports
-/******/ 		return __webpack_require__(597);
+/******/ 		return __webpack_require__(276);
 /******/ 	};
 /******/
 /******/ 	// run startup
@@ -967,6 +967,45 @@ module.exports = require("child_process");
 
 /***/ }),
 
+/***/ 276:
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const core = __webpack_require__(470);
+const path = __webpack_require__(622);
+const execAsync_1 = __webpack_require__(878);
+const validateRequiredInputs_1 = __webpack_require__(761);
+function run() {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            validateRequiredInputs_1.validateRequiredInputs(["cluster", "service", "container_definitions_path"]);
+            const cluster = core.getInput("cluster", { required: true });
+            const service = core.getInput("service", { required: true });
+            const getRunningTaskDefinitionScript = path.join(__dirname, "../../helpers/get-running-task-definition.sh");
+            process.env.CURRENT_STABLE_TASKDEF_ARN = yield execAsync_1.execAsync(`sh ${getRunningTaskDefinitionScript} --cluster "${cluster}" --service "${service}"`);
+            yield execAsync_1.execAsync(`sh ${path.join(__dirname, "../build-task-definition.sh")}`);
+        }
+        catch (error) {
+            core.setFailed(error.message);
+        }
+    });
+}
+run();
+
+
+/***/ }),
+
 /***/ 357:
 /***/ (function(module) {
 
@@ -1302,40 +1341,6 @@ exports.getState = getState;
 
 /***/ }),
 
-/***/ 597:
-/***/ (function(__unusedmodule, exports, __webpack_require__) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const core = __webpack_require__(470);
-const path = __webpack_require__(622);
-const execAsync_1 = __webpack_require__(878);
-function run() {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            process.env.SSH_KEY = core.getInput("ssh-key", { required: true });
-            yield execAsync_1.execAsync(`sh ${path.join(__dirname, "../ssh.sh")}`);
-        }
-        catch (error) {
-            core.setFailed(error.message);
-        }
-    });
-}
-run();
-
-
-/***/ }),
-
 /***/ 614:
 /***/ (function(module) {
 
@@ -1563,6 +1568,28 @@ function isUnixExecutable(stats) {
 /***/ (function(module) {
 
 module.exports = require("fs");
+
+/***/ }),
+
+/***/ 761:
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.validateRequiredInputs = void 0;
+const core = __webpack_require__(470);
+/**
+ * Validate that all required inputs were provided
+ * If not, it will throw.
+ */
+function validateRequiredInputs(requiredInputs) {
+    for (const requiredInput of requiredInputs) {
+        core.getInput(requiredInput, { required: true });
+    }
+}
+exports.validateRequiredInputs = validateRequiredInputs;
+
 
 /***/ }),
 
