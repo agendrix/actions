@@ -8,6 +8,9 @@ This repo contains a set of reusable actions for GitHub Workflows.
 
 - [use-ssh](./use-ssh/README.md): Fetch private repositories
 - [git-diff-check](./git-diff-check/README.md): Test for specific changes with git diff
+- [AWS](./aws/README.md): AWS-related actions
+  - [build-and-push-to-ecr](./build-and-push-to-ecr/README.md): Build and Push a Docker image to ECR
+  - [build-task-definition](./build-task-definition/README.md): Build a task-definition from merging a given container-definitions JSON file
 
 ## Developing locally
 
