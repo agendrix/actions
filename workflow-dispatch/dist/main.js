@@ -5669,7 +5669,7 @@ const github = __webpack_require__(469);
 function parseInputs() {
     try {
         const inputs = core.getInput("inputs");
-        return inputs ? JSON.parse(inputs) : null;
+        return inputs ? JSON.parse(inputs) : {};
     }
     catch (_) {
         core.setFailed("Action failed. inputs is not a valid JSON string");

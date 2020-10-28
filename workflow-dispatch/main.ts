@@ -5,7 +5,7 @@ import { send } from "process";
 function parseInputs() {
   try {
     const inputs = core.getInput("inputs");
-    return inputs ? JSON.parse(inputs) : null;
+    return inputs ? JSON.parse(inputs) : {};
   } catch (_) {
     core.setFailed("Action failed. inputs is not a valid JSON string");
   }
