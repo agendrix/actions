@@ -1,11 +1,11 @@
 import * as core from "@actions/core";
-import { execAsync } from "../helpers/execAsync";
+import { exec } from "@actions/exec";
 
 async function run() {
   try {
-    await execAsync("ssh-agent -k");
+    await exec("ssh-agent -k");
   } catch (error) {
-    core.setFailed(error.message);
+    core.setFailed(`Action failed with error ${error}`);
   }
 }
 

@@ -1,5 +1,5 @@
 import * as core from "@actions/core";
-import { execAsync } from "../helpers/execAsync";
+import { exec } from "@actions/exec";
 
 function setOutput(message: string, containsChanges: boolean) {
   core.info(message);
@@ -12,10 +12,16 @@ async function run() {
     const current = core.getInput("current", { required: true });
     const tests = core.getInput("tests", { required: true }).split(/\r?\n| /);
 
-    let diffs;
+    let diffs = "";
     try {
       core.startGroup("Current diffs");
-      diffs = await execAsync(`git diff --name-only --diff-filter=AM ${before} ${current}`);
+      await exec(`git diff --name-only --diff-filter=AM "${before}" "${current}"`, undefined, {
+        listeners: {
+          stdout: (data: Buffer) => {
+            diffs += data.toString();
+          },
+        },
+      });
     } catch (_) {
       core.endGroup();
       return setOutput("Error comparing commits. Assuming changes.", true);
@@ -27,14 +33,17 @@ async function run() {
     core.info(tests.join("\n"));
     core.endGroup();
 
+    const diffFiles = diffs.split("\n");
     for (const test of tests) {
-      if (diffs.includes(test)) {
-        return setOutput(`Found match for "${test}".`, true);
+      for (const file of diffFiles) {
+        if (file.includes(test)) {
+          return setOutput(`Found match for "${test}" with "${file}".`, true);
+        }
       }
     }
     return setOutput("No match found.", false);
   } catch (error) {
-    core.setFailed(error.message);
+    core.setFailed(`Action failed with error ${error}`);
   }
 }
 

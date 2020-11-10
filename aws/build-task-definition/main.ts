@@ -1,6 +1,6 @@
 import * as core from "@actions/core";
+import { exec } from "@actions/exec";
 import * as path from "path";
-import { execAsync } from "../../helpers/execAsync";
 import { validateRequiredInputs } from "../../helpers/validateRequiredInputs";
 
 async function run() {
@@ -11,13 +11,19 @@ async function run() {
     const service = core.getInput("service", { required: true });
     const getRunningTaskDefinitionScript = path.join(__dirname, "../../helpers/get-running-task-definition.sh");
 
-    process.env.CURRENT_STABLE_TASKDEF_ARN = await execAsync(
-      `sh ${getRunningTaskDefinitionScript} --cluster "${cluster}" --service "${service}"`,
-    );
+    let stableTaskDefArn = "";
+    await exec(`sh ${getRunningTaskDefinitionScript} --cluster "${cluster}" --service "${service}"`, undefined, {
+      listeners: {
+        stdout: (data: Buffer) => {
+          stableTaskDefArn += data.toString();
+        },
+      },
+    });
 
-    await execAsync(`sh ${path.join(__dirname, "../build-task-definition.sh")}`);
+    process.env.CURRENT_STABLE_TASKDEF_ARN = stableTaskDefArn;
+    await exec(`sh ${path.join(__dirname, "../build-task-definition.sh")}`);
   } catch (error) {
-    core.setFailed(error.message);
+    core.setFailed(`Action failed with error ${error}`);
   }
 }
 
