@@ -5,9 +5,12 @@ import { execAsync } from "../helpers/execAsync";
 async function run() {
   try {
     process.env.SSH_KEY = core.getInput("ssh-key", { required: true });
+    console.log("Before await");
     await execAsync(`sh ${path.join(__dirname, "../ssh.sh")}`);
+    console.log("After await");
   } catch (error) {
-    core.setFailed(error.message);
+    console.log("Catched error");
+    core.setFailed(`Action failed with error ${error}`);
   }
 }
 
