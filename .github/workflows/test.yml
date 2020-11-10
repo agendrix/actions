@@ -14,10 +14,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Use SSH
-        uses: ./use-ssh
+      - uses: ./git-diff-check
         with:
-          ssh-key: ${{ secrets.SSH_KEY }}
+          before: "9e270b2e71bb6e91df4a434270e8e4bd3cd4b85b"
+          current: ${{ github.sha }}
+          tests: |
+            e
+            dist
       # - run: yarn
       # - run: yarn lint
       # - run: yarn build-all
