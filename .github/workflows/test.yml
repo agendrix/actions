@@ -13,19 +13,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
 
-      - uses: ./git-diff-check
-        with:
-          before: "9e270b2e71bb6e91df4a434270e8e4bd3cd4b85b"
-          current: ${{ github.sha }}
-          tests: |
-            e
-            dist
-        id: diffs
+      - run: yarn
 
-      - run: echo "Contains changes = ${{ steps.diffs.outputs.contains_changes }}"
-      # - run: yarn
-      # - run: yarn lint
-      # - run: yarn build-all
+      - run: yarn lint
+
+      - run: yarn build-all
+
+      - run: |
+          distStatus=$(git status --porcelain "**/dist/*.js")
+          if [ -z "$distStatus" ]; then 
+            echo "✅ All action's dist folders are compiled."
+          else
+            echo "🚫 Some actions were not compiled."
+            echo "Please run \`yarn build-all\` and commit."
+            echo
+            echo "Dist diff status:"
+            echo "$distStatus"
+            exit 1
+          fi

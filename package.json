@@ -6,7 +6,7 @@
     "lint": "eslint **/*.ts",
     "build-all": "node build.js",
     "build-diff": "node build.js --diff \"$(git diff --name-only)\"",
-    "git-add-dist": "git add **/dist/*.js"
+    "git-add-dist": "git add \"**/dist/*.js\""
   },
   "pre-commit": [
     "build-diff",

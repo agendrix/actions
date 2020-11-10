@@ -29,7 +29,7 @@ async function run() {
       core.endGroup();
     }
 
-    core.startGroup("Files and folders to test");
+    core.startGroup("Test changes Files and folders to test");
     core.info(tests.join("\n"));
     core.endGroup();
 
