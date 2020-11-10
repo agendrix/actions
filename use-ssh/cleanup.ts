@@ -5,7 +5,7 @@ async function run() {
   try {
     await exec("ssh-agent -k");
   } catch (error) {
-    core.setFailed(error.message);
+    core.setFailed(`Action failed with error ${error}`);
   }
 }
 

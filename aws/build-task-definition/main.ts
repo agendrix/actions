@@ -23,7 +23,7 @@ async function run() {
     process.env.CURRENT_STABLE_TASKDEF_ARN = stableTaskDefArn;
     await exec(`sh ${path.join(__dirname, "../build-task-definition.sh")}`);
   } catch (error) {
-    core.setFailed(error.message);
+    core.setFailed(`Action failed with error ${error}`);
   }
 }
 

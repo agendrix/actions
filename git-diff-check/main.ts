@@ -43,7 +43,7 @@ async function run() {
     }
     return setOutput("No match found.", false);
   } catch (error) {
-    core.setFailed(error.message);
+    core.setFailed(`Action failed with error ${error}`);
   }
 }
 

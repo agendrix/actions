@@ -9,7 +9,7 @@ async function run() {
 
     await exec(`sh ${path.join(__dirname, "../build-and-push.sh")}`);
   } catch (error) {
-    core.setFailed(error.message);
+    core.setFailed(`Action failed with error ${error}`);
   }
 }
 
