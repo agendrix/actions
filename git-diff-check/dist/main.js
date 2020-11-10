@@ -1645,9 +1645,12 @@ function run() {
             core.startGroup("Files and folders to test");
             core.info(tests.join("\n"));
             core.endGroup();
+            const diffFiles = diffs.split("\n");
             for (const test of tests) {
-                if (diffs.includes(test)) {
-                    return setOutput(`Found match for "${test}".`, true);
+                for (const file of diffFiles) {
+                    if (file.includes(test)) {
+                        return setOutput(`Found match for "${test}" with "${file}".`, true);
+                    }
                 }
             }
             return setOutput("No match found.", false);
