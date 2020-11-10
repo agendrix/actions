@@ -1,5 +1,7 @@
 name: Git Diff Check
-description: Test if git diff contains any of the listed diff.
+description: |
+  Test if git diff contains any of the listed diff.
+  This action will test if any of the files from the git diff contains one of the listed test strings.
 inputs:
   before:
     description: Referenced commit hash
