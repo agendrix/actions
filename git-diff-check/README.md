@@ -8,7 +8,9 @@ See [action.yml](./action.yml) for the list of `inputs` and `outputs`.
 
 ```yaml
 steps:
-  - uses: actions/checkout@v1
+  - uses: actions/checkout@v2
+    with:
+      fetch-depth: 0 # 0 indicates all history for all branches and tags.
   - name: Test for changes
     uses: agendrix/actions/git-diff-check@master
     id: diffs

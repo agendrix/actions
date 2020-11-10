@@ -21,6 +21,9 @@ jobs:
           tests: |
             e
             dist
+        id: diffs
+
+      - run: echo "Contains changes = ${{ steps.diffs.outputs.contains_changes }}"
       # - run: yarn
       # - run: yarn lint
       # - run: yarn build-all
