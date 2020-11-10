@@ -1002,11 +1002,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const core = __webpack_require__(470);
-const execAsync_1 = __webpack_require__(878);
+const exec_1 = __webpack_require__(986);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            yield execAsync_1.execAsync("ssh-agent -k");
+            yield exec_1.exec("ssh-agent -k");
         }
         catch (error) {
             core.setFailed(error.message);
@@ -1626,40 +1626,6 @@ function isUnixExecutable(stats) {
 /***/ (function(module) {
 
 module.exports = require("fs");
-
-/***/ }),
-
-/***/ 878:
-/***/ (function(__unusedmodule, exports, __webpack_require__) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.execAsync = void 0;
-const exec_1 = __webpack_require__(986);
-function execAsync(commandLine, args = undefined) {
-    return __awaiter(this, void 0, void 0, function* () {
-        return new Promise((resolve, reject) => {
-            exec_1.exec(commandLine, args, {
-                listeners: {
-                    stdout: (data) => resolve(data.toString()),
-                    stderr: (data) => reject(data.toString()),
-                },
-            }).catch((reason) => reject(reason));
-        });
-    });
-}
-exports.execAsync = execAsync;
-
 
 /***/ }),
 
