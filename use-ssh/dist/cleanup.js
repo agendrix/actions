@@ -1009,7 +1009,7 @@ function run() {
             yield exec_1.exec("ssh-agent -k");
         }
         catch (error) {
-            core.setFailed(error.message);
+            core.setFailed(`Action failed with error ${error}`);
         }
     });
 }
