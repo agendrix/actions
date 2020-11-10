@@ -20,7 +20,8 @@ jobs:
 
       - run: yarn build-all
 
-      - run: |
+      - name: Test for un-compiled code
+        run: |
           distStatus=$(git status --porcelain "**/dist/*.js")
           if [ -z "$distStatus" ]; then 
             echo "✅ All action's dist folders are compiled."
