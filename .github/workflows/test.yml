@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - master
+      - handle-exit-codes
 
 jobs:
   build:
