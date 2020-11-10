@@ -11,7 +11,7 @@ See [action.yml](./action.yml) for the list of `inputs` and `outputs`.
 steps:
   - uses: actions/checkout@v2
     with:
-      fetch-depth: 0 # 0 indicates all history for all branches and tags.
+      fetch-depth: 0
   - name: Test for changes
     uses: agendrix/actions/git-diff-check@master
     id: diffs
