@@ -1,5 +1,5 @@
 import * as core from "@actions/core";
-import { exec } from "@actions/exec";
+import { inlineExec } from "../helpers/inlineExec";
 
 function setOutput(message: string, containsChanges: boolean) {
   core.info(message);
@@ -15,13 +15,7 @@ async function run() {
     let diffs = "";
     try {
       core.startGroup("Current diffs");
-      await exec(`git diff --name-only --diff-filter=AM "${before}" "${current}"`, undefined, {
-        listeners: {
-          stdout: (data: Buffer) => {
-            diffs += data.toString();
-          },
-        },
-      });
+      diffs = await inlineExec(`git diff --name-only --diff-filter=AM "${before}" "${current}"`);
     } catch (_) {
       core.endGroup();
       return setOutput("Error comparing commits. Assuming changes.", true);

@@ -1036,6 +1036,43 @@ module.exports = require("assert");
 
 /***/ }),
 
+/***/ 417:
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.inlineExec = void 0;
+const exec_1 = __webpack_require__(986);
+/**
+ * By default, await exec() returns the response number of the command.
+ * This returns the stdout data instead.
+ * @param commandLine The command to run
+ */
+exports.inlineExec = (commandLine) => __awaiter(void 0, void 0, void 0, function* () {
+    let stdoutData = "";
+    yield exec_1.exec(commandLine, undefined, {
+        listeners: {
+            stdout: (data) => {
+                stdoutData += data.toString();
+            },
+        },
+    });
+    return stdoutData;
+});
+
+
+/***/ }),
+
 /***/ 431:
 /***/ (function(__unusedmodule, exports, __webpack_require__) {
 
@@ -1613,7 +1650,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const core = __webpack_require__(470);
-const exec_1 = __webpack_require__(986);
+const inlineExec_1 = __webpack_require__(417);
 function setOutput(message, containsChanges) {
     core.info(message);
     core.setOutput("contains_changes", containsChanges ? "true" : "false");
@@ -1627,13 +1664,7 @@ function run() {
             let diffs = "";
             try {
                 core.startGroup("Current diffs");
-                yield exec_1.exec(`git diff --name-only --diff-filter=AM "${before}" "${current}"`, undefined, {
-                    listeners: {
-                        stdout: (data) => {
-                            diffs += data.toString();
-                        },
-                    },
-                });
+                diffs = yield inlineExec_1.inlineExec(`git diff --name-only --diff-filter=AM "${before}" "${current}"`);
             }
             catch (_) {
                 core.endGroup();
