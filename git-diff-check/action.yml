@@ -12,6 +12,10 @@ inputs:
   tests:
     description: List of files/folders to test
     required: true
+  assume_changes:
+    description: Wether or not the script should assume changes on comparison error
+    required: false
+    default: "true"
 outputs:
   contains_changes:
     description: Indicates that any of the tested files have changed or not

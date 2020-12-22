@@ -1624,6 +1624,7 @@ function run() {
             const before = core.getInput("before", { required: true });
             const current = core.getInput("current", { required: true });
             const tests = core.getInput("tests", { required: true }).split(/\r?\n| /);
+            const assumeChanges = core.getInput("assume_changes") === "true";
             let diffs = "";
             try {
                 core.startGroup("Current diffs");
@@ -1637,7 +1638,9 @@ function run() {
             }
             catch (_) {
                 core.endGroup();
-                return setOutput("Error comparing commits. Assuming changes.", true);
+                return assumeChanges
+                    ? setOutput("Error comparing commits. Assuming changes.", true)
+                    : setOutput("Error comparing commits. Will not assume changes.", false);
             }
             finally {
                 core.endGroup();
