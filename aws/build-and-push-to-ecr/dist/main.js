@@ -1036,6 +1036,43 @@ module.exports = require("assert");
 
 /***/ }),
 
+/***/ 417:
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.inlineExec = void 0;
+const exec_1 = __webpack_require__(986);
+/**
+ * By default, await exec() returns the response number of the command.
+ * This returns the stdout data instead.
+ * @param commandLine The command to run
+ */
+exports.inlineExec = (commandLine) => __awaiter(void 0, void 0, void 0, function* () {
+    let stdoutData = "";
+    yield exec_1.exec(commandLine, undefined, {
+        listeners: {
+            stdout: (data) => {
+                stdoutData += data.toString();
+            },
+        },
+    });
+    return stdoutData;
+});
+
+
+/***/ }),
+
 /***/ 431:
 /***/ (function(__unusedmodule, exports, __webpack_require__) {
 
@@ -1384,13 +1421,72 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const core = __webpack_require__(470);
 const exec_1 = __webpack_require__(986);
-const path = __webpack_require__(622);
-const validateRequiredInputs_1 = __webpack_require__(761);
+const inlineExec_1 = __webpack_require__(417);
+const ecrRegistry = core.getInput("ecr_registry", { required: true });
+const image = core.getInput("image", { required: true });
+const tag = core.getInput("tag", { required: true });
+const args = core.getInput("args");
+const path = core.getInput("path");
+const file = core.getInput("file") || `${path}/Dockerfile`;
+const taggedRegistryImage = `${ecrRegistry}/${image}:${tag}`;
+const latestRegistryImage = `${ecrRegistry}/${image}:latest`;
+function getLatestImageDetailsFromECR() {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const imagesDetails = JSON.parse(yield inlineExec_1.inlineExec(`aws ecr describe-images --repository-name "${image}" --image-ids imageTag=latest`));
+            return imagesDetails.imageDetails[0];
+        }
+        catch (error) {
+            core.info(`Unable to find latest image tag.\nError is: ${error}`);
+            core.info("A new latest tag will be uploaded.");
+            return null;
+        }
+    });
+}
+function setOutputs(tagVersion) {
+    core.setOutput("image_uri", `${ecrRegistry}/${image}:${tagVersion}`);
+    core.setOutput("image", `${image}:${tagVersion}`);
+    core.setOutput("tag", tagVersion);
+}
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            validateRequiredInputs_1.validateRequiredInputs(["ecr_registry", "image", "tag"]);
-            yield exec_1.exec(`sh ${path.join(__dirname, "../build-and-push.sh")}`);
+            core.startGroup("Fetch latest image");
+            const latestECRImage = yield getLatestImageDetailsFromECR();
+            core.endGroup();
+            let cacheFrom = "";
+            if (latestECRImage) {
+                cacheFrom = `--build-arg BUILDKIT_INLINE_CACHE=1 --cache-from "${latestRegistryImage}"`;
+            }
+            yield core.group(`Building '${image}:${tag}' image`, () => __awaiter(this, void 0, void 0, function* () {
+                yield exec_1.exec(`docker build ${cacheFrom} \
+        --tag "${image}:latest" \
+        --tag "${taggedRegistryImage}" \
+        --tag "${latestRegistryImage}" \
+        ${args} -f "${file}" \
+        "${path}"`);
+            }));
+            let finalMessage;
+            let outputTag;
+            core.startGroup("Pushing new image to ECR");
+            yield exec_1.exec(`docker push "${latestRegistryImage}"`);
+            // Fetch the new latest version to see if its digest has changed
+            const newLatestECRImage = yield getLatestImageDetailsFromECR();
+            if (!newLatestECRImage)
+                throw new Error(`No image with tag 'latest' found after pushing '${image}:latest' to ECR.`);
+            const latestRefTag = newLatestECRImage.imageTags.find((tag) => tag !== "latest");
+            if (newLatestECRImage.imageDigest !== (latestECRImage === null || latestECRImage === void 0 ? void 0 : latestECRImage.imageDigest) || !latestRefTag) {
+                yield exec_1.exec(`docker push "${taggedRegistryImage}"`);
+                finalMessage = `The digest of '${image}:latest' has changed.\nA new tag version has been pushed: ${image}:${tag}.`;
+                outputTag = tag;
+            }
+            else {
+                finalMessage = `Local tag '${image}:${tag}' has the same digest as remote '${image}:${latestRefTag}' (latest).\nTag '${latestRefTag}' will be used.`;
+                outputTag = latestRefTag;
+            }
+            core.endGroup();
+            core.info(finalMessage);
+            setOutputs(outputTag);
         }
         catch (error) {
             core.setFailed(`Action failed with error ${error}`);
@@ -1629,28 +1725,6 @@ function isUnixExecutable(stats) {
 /***/ (function(module) {
 
 module.exports = require("fs");
-
-/***/ }),
-
-/***/ 761:
-/***/ (function(__unusedmodule, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateRequiredInputs = void 0;
-const core = __webpack_require__(470);
-/**
- * Validate that all required inputs were provided
- * If not, it will throw.
- */
-function validateRequiredInputs(requiredInputs) {
-    for (const requiredInput of requiredInputs) {
-        core.getInput(requiredInput, { required: true });
-    }
-}
-exports.validateRequiredInputs = validateRequiredInputs;
-
 
 /***/ }),
 
