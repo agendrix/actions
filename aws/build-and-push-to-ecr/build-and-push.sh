@@ -76,7 +76,9 @@ echo "::group::Pushing new image to ECR"
 docker tag "$tagged_registry_image" "$latest_registry_image"
 docker tag "$tagged_registry_image" "$INPUT_IMAGE:latest"
 docker push "$tagged_registry_image"
-docker push "$latest_registry_image"
+if [ "$INPUT_SKIP_LATEST_TAG_PUSH" != "true" ]; then
+  docker push "$latest_registry_image"
+fi
 echo "::endgroup::"
 
 set_outputs "$INPUT_IMAGE" "$INPUT_TAG"
