@@ -31,7 +31,15 @@ set_outputs() {
   fi
 }
 
+pretty_print_task_definition() {
+  task_definition=$1
+  task_definition=$(printf '%s\n' "$task_definition")
+  task_definition=$(echo "$task_definition" | jq -S '.containerDefinitions[].environment |= sort_by(.name) | .containerDefinitions[].secrets |= sort_by(.name)')
+  echo "$task_definition"
+}
+
 container_definitions=$(sed "s+<IMAGE>+$INPUT_IMAGE+g;" "$INPUT_CONTAINER_DEFINITIONS_PATH")
+container_definitions=$(echo "$container_definitions" | jq '.[].portMappings |= map(if .hostPort == null then .hostPort = .containerPort else . end)')
 
 if [ -f "$INPUT_SECRETS_PATH" ]; then
   echo "Appending secrets for service $INPUT_SERVICE"
@@ -47,8 +55,8 @@ if [ -n "$CURRENT_STABLE_TASKDEF_ARN" ]; then
   get_task_definition "$(echo "${CURRENT_STABLE_TASKDEF_ARN}" | tr  -d '\n')"
   current_stable_taskdef="$returned_task_definition"
 
-  current_tmp="$(mktemp)"; printf '%s\n' "$current_stable_taskdef" | jq -S . > "$current_tmp"
-  new_tmp="$(mktemp)";     printf '%s\n' "$new_task_definition"    | jq -S . > "$new_tmp"
+  current_tmp="$(mktemp)"; pretty_print_task_definition "$current_stable_taskdef" > "$current_tmp" 
+  new_tmp="$(mktemp)"; pretty_print_task_definition "$new_task_definition" > "$new_tmp" 
 
   if cmp -s "$current_tmp" "$new_tmp"; then
     echo "The task definition has not changed. Deployment will be skipped."
