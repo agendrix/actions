@@ -1628,7 +1628,7 @@ function run() {
             let diffs = "";
             try {
                 core.startGroup("Current diffs");
-                yield exec_1.exec(`git diff --name-only --diff-filter=AM "${before}" "${current}"`, undefined, {
+                yield exec_1.exec(`git diff --name-only --diff-filter=AMR "${before}" "${current}"`, undefined, {
                     listeners: {
                         stdout: (data) => {
                             diffs += data.toString();

@@ -16,7 +16,7 @@ async function run() {
     let diffs = "";
     try {
       core.startGroup("Current diffs");
-      await exec(`git diff --name-only --diff-filter=AM "${before}" "${current}"`, undefined, {
+      await exec(`git diff --name-only --diff-filter=AMR "${before}" "${current}"`, undefined, {
         listeners: {
           stdout: (data: Buffer) => {
             diffs += data.toString();
