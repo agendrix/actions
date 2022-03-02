@@ -3,7 +3,9 @@ import { exec } from "@actions/exec";
 
 async function run() {
   try {
-    await exec("ssh-agent -k");
+    const sshKey = core.getState("SSH_KEY");
+    core.setSecret(sshKey);
+    await exec(`echo ${sshKey} | ssh-add -d -`);
   } catch (error) {
     core.setFailed(`Action failed with error ${error}`);
   }
