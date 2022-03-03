@@ -1006,7 +1006,9 @@ const exec_1 = __webpack_require__(986);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            yield exec_1.exec("ssh-agent -k");
+            const sshKey = core.getState("SSH_KEY");
+            core.setSecret(sshKey); // core.setSecret masks the ssh key from the logs
+            yield exec_1.exec(`echo ${sshKey} | ssh-add -d -`);
         }
         catch (error) {
             core.setFailed(`Action failed with error ${error}`);

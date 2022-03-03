@@ -1389,6 +1389,7 @@ function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             process.env.SSH_KEY = core.getInput("ssh-key", { required: true });
+            core.setSecret(process.env.SSH_KEY); // core.setSecret masks the ssh key from the logs
             yield exec_1.exec(`sh ${path.join(__dirname, "../ssh.sh")}`);
         }
         catch (error) {
