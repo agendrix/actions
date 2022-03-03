@@ -1007,7 +1007,7 @@ function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const sshKey = core.getState("SSH_KEY");
-            core.setSecret(sshKey);
+            core.setSecret(sshKey); // core.setSecret masks the ssh key from the logs
             yield exec_1.exec(`echo ${sshKey} | ssh-add -d -`);
         }
         catch (error) {
