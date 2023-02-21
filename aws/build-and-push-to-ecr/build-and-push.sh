@@ -22,10 +22,11 @@ get_tag_version_from_latest() {
 set_outputs() {
   image=$1
   version=$2
-
-  echo "::set-output name=image_uri::$INPUT_ECR_REGISTRY/$image:$version"
-  echo "::set-output name=image::$image:$version"
-  echo "::set-output name=tag::$version"
+  {
+    echo "image_uri=$INPUT_ECR_REGISTRY/$image:$version"
+    echo "image=$image:$version"
+    echo "tag=$version"
+  } >> "$GITHUB_OUTPUT"
 }
 
 compare_digest_with_latest() {
