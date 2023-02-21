@@ -5,6 +5,6 @@ inputs:
     description: The private SSH key to use
     required: true
 runs:
-  using: node12
+  using: node16
   main: dist/main.js
   post: dist/cleanup.js
