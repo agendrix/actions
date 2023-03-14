@@ -20,5 +20,5 @@ outputs:
   contains_changes:
     description: Indicates that any of the tested files have changed or not
 runs:
-  using: node16
+  using: node12
   main: dist/main.js
