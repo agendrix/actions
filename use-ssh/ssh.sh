@@ -7,8 +7,8 @@ eval $(ssh-agent)
 # Add key to ssh-agent
 echo "${SSH_KEY}" | ssh-add -
 
-echo "var<<EOF" >> "$GITHUB_STATE"
-echo "SSH_KEY=$SSH_KEY" >> "$GITHUB_STATE"
+echo "SSH_KEY<<EOF" >> "$GITHUB_STATE"
+echo "$SSH_KEY" >> "$GITHUB_STATE"
 echo "EOF" >> "$GITHUB_STATE"
 
 echo "SSH_AUTH_SOCK=$SSH_AUTH_SOCK" >> $GITHUB_ENV
