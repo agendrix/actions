@@ -10,7 +10,7 @@ See [action.yml](./action.yml) for the list of `inputs` and `outputs`.
 ```yaml
 steps:
   - name: Checkout
-    uses: actions/checkout@v2
+    uses: actions/checkout@v3
 
   - name: Configure AWS credentials
     uses: aws-actions/configure-aws-credentials@v1
