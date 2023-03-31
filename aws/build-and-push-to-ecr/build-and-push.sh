@@ -52,8 +52,7 @@ echo "::group::Building new image using latest image cache"
 docker buildx build \
   --cache-to type=inline \
   --cache-from type=registry,ref="$latest_registry_image" \
-  --output type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true \
-  --tag "$tagged_registry_image" \
+  --output type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true,name=$tagged_registry_image,push=true \
   $INPUT_ARGS -f "$file" \
   "$INPUT_PATH";
 echo "::endgroup::"
@@ -61,9 +60,9 @@ echo "::endgroup::"
 # compare_digest_with_latest
 
 echo "::group::Pushing new image to ECR"
-docker tag "$tagged_registry_image" "$latest_registry_image"
-docker tag "$tagged_registry_image" "$INPUT_IMAGE:latest"
-docker push "$tagged_registry_image"
+# docker tag "$tagged_registry_image" "$latest_registry_image"
+# docker tag "$tagged_registry_image" "$INPUT_IMAGE:latest"
+# docker push "$tagged_registry_image"
 if [ "$INPUT_SKIP_LATEST_TAG_PUSH" != "true" ]; then
   docker push "$latest_registry_image"
 fi
