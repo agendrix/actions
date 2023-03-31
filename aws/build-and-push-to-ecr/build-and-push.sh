@@ -56,7 +56,8 @@ if [ "$latest_tag_available" = "true" ]; then
   echo "::endgroup::"
 
   echo "::group::Building new image from latest image cache"
-  docker build \
+  docker buildx build \
+    --output type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true \
     --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from "$latest_registry_image" \
     --tag "$tagged_registry_image" \
     $INPUT_ARGS -f "$file" \
@@ -67,6 +68,7 @@ if [ "$latest_tag_available" = "true" ]; then
 else
   echo "::group::Building new image"
   docker build \
+    --output type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true \
     --tag "$tagged_registry_image" \
     $INPUT_ARGS -f "$file" \
     "$INPUT_PATH";
