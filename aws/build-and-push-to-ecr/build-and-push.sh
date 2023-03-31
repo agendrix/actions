@@ -58,7 +58,7 @@ docker buildx build \
   "$INPUT_PATH";
 echo "::endgroup::"
 
-compare_digest_with_latest
+# compare_digest_with_latest
 
 echo "::group::Pushing new image to ECR"
 docker tag "$tagged_registry_image" "$latest_registry_image"
