@@ -52,7 +52,7 @@ echo "::group::Building new image using latest image cache"
 docker buildx build \
   --cache-to type=inline \
   --cache-from type=registry,ref="$latest_registry_image" \
-  --output type=image,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true,name=$tagged_registry_image,push=true \
+  --output type=image,compression=zstd,compression-level=3,force-compression=true,name=$tagged_registry_image,push=true \
   $INPUT_ARGS -f "$file" \
   "$INPUT_PATH";
 echo "::endgroup::"
