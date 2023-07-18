@@ -15,6 +15,9 @@ setup_soci() {
   wget https://github.com/awslabs/soci-snapshotter/releases/download/v0.3.0/soci-snapshotter-0.3.0-linux-amd64.tar.gz
   sudo tar -C /usr/local/bin -xvf soci-snapshotter-0.3.0-linux-amd64.tar.gz
   echo "::endgroup::"
+
+  wget "https://github.com/containerd/nerdctl/releases/download/v1.4.0/nerdctl-1.4.0-linux-amd64.tar.gz"
+  sudo tar -C /usr/local/bin -xvf nerdctl-1.4.0-linux-amd64.tar.gz
 }
 
 get_tag_version_from_latest() {
@@ -59,10 +62,10 @@ setup_soci
 
 latest_tag_available=$(aws ecr list-images --repository-name "$INPUT_IMAGE" | jq '.imageIds[] | select(.imageTag=="latest") | length > 0')
 if [ "$latest_tag_available" = "true" ]; then
-  echo "::group::Pulling \"$INPUT_IMAGE:latest\""
-  docker pull "$latest_registry_image"
-  docker tag "$latest_registry_image" "$INPUT_IMAGE:latest"
-  echo "::endgroup::"
+  # echo "::group::Pulling \"$INPUT_IMAGE:latest\""
+  # docker pull "$latest_registry_image"
+  # docker tag "$latest_registry_image" "$INPUT_IMAGE:latest"
+  # echo "::endgroup::"
 
   echo "::group::Building new image from latest image cache"
   docker buildx build \
@@ -93,8 +96,8 @@ fi
 echo "::endgroup::"
 
 echo "::group::Creating soci index"
- docker save "$tagged_registry_image" > image.tar
- sudo ctr image import image.tar
+ sudo nerdctl save "$tagged_registry_image" -o image.tar
+ sudo nerdctl load -i image.tar
  sudo ctr image ls
  sudo soci create "$tagged_registry_image"
  PASSWORD=$(aws ecr get-login-password)
