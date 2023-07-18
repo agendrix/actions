@@ -97,7 +97,8 @@ echo "::group::Creating soci index"
  sudo ctr image import image.tar
  sudo ctr image ls
  sudo soci create "$tagged_registry_image"
- sudo soci push "$tagged_registry_image"
+ PASSWORD=$(aws ecr get-login-password)
+ sudo soci push --user AWS:$PASSWORD "$tagged_registry_image"
 echo "::endgroup::"
 
 
