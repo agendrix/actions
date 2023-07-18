@@ -96,12 +96,12 @@ fi
 echo "::endgroup::"
 
 echo "::group::Creating soci index"
- sudo nerdctl save "$tagged_registry_image" -o image.tar
- sudo nerdctl load -i image.tar
- sudo ctr image ls
- sudo soci create "$tagged_registry_image"
- PASSWORD=$(aws ecr get-login-password)
- sudo soci push --user AWS:$PASSWORD "$tagged_registry_image"
+  aws ecr get-login-password | sudo nerdctl login --username AWS --password-stdin "$INPUT_ECR_REGISTRY"
+  sudo nerdctl pull "$tagged_registry_image"
+  sudo ctr image ls
+  sudo soci create "$tagged_registry_image"
+  PASSWORD=$(aws ecr get-login-password)
+  sudo soci push --user AWS:$PASSWORD "$tagged_registry_image"
 echo "::endgroup::"
 
 
