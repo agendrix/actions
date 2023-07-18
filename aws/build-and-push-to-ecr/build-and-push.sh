@@ -13,7 +13,7 @@ latest_registry_image="$INPUT_ECR_REGISTRY/$INPUT_IMAGE:latest"
 setup_soci() {
   echo "::group::Setting up soci snapshotter"
   wget https://github.com/awslabs/soci-snapshotter/releases/download/v0.3.0/soci-snapshotter-0.3.0-linux-amd64.tar.gz
-  sudo tar -C /usr/local/bin -xvf soci-snapshotter-0.3.0-linux-amd64.tar.gz ./soci ./soci-snapshotter-grpc
+  sudo tar -C /usr/local/bin -xvf soci-snapshotter-0.3.0-linux-amd64.tar.gz
   echo "::endgroup::"
 }
 
