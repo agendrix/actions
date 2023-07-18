@@ -55,17 +55,33 @@ compare_digest_with_latest() {
   fi
 }
 
-
 setup_soci
-echo "::group::Building new image using latest image cache"
-docker buildx build \
-  --cache-to type=inline \
-  --cache-from type=registry,ref="$latest_registry_image" \
-  $INPUT_ARGS -f "$file" \
-  "$INPUT_PATH";
-echo "::endgroup::"
 
-compare_digest_with_latest
+latest_tag_available=$(aws ecr list-images --repository-name "$INPUT_IMAGE" | jq '.imageIds[] | select(.imageTag=="latest") | length > 0')
+if [ "$latest_tag_available" = "true" ]; then
+  echo "::group::Pulling \"$INPUT_IMAGE:latest\""
+  docker pull "$latest_registry_image"
+  docker tag "$latest_registry_image" "$INPUT_IMAGE:latest"
+  echo "::endgroup::"
+
+  echo "::group::Building new image from latest image cache"
+  docker buildx build \
+    --cache-to type=inline \
+    --cache-from type=registry,ref="$latest_registry_image" \
+    --tag "$tagged_registry_image" \
+    $INPUT_ARGS -f "$file" \
+    "$INPUT_PATH";
+  echo "::endgroup::"
+
+  compare_digest_with_latest
+else
+  echo "::group::Building new image"
+  docker build \
+    --tag "$tagged_registry_image" \
+    $INPUT_ARGS -f "$file" \
+    "$INPUT_PATH";
+  echo "::endgroup::"
+fi
 
 echo "::group::Pushing new image to ECR"
 docker tag "$tagged_registry_image" "$latest_registry_image"
