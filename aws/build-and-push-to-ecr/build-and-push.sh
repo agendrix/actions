@@ -62,10 +62,10 @@ setup_soci
 
 latest_tag_available=$(aws ecr list-images --repository-name "$INPUT_IMAGE" | jq '.imageIds[] | select(.imageTag=="latest") | length > 0')
 if [ "$latest_tag_available" = "true" ]; then
-  # echo "::group::Pulling \"$INPUT_IMAGE:latest\""
-  # docker pull "$latest_registry_image"
-  # docker tag "$latest_registry_image" "$INPUT_IMAGE:latest"
-  # echo "::endgroup::"
+  echo "::group::Pulling \"$INPUT_IMAGE:latest\""
+  docker pull "$latest_registry_image"
+  docker tag "$latest_registry_image" "$INPUT_IMAGE:latest"
+  echo "::endgroup::"
 
   echo "::group::Building new image from latest image cache"
   docker buildx build \
