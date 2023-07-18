@@ -10,6 +10,13 @@ fi
 tagged_registry_image="$INPUT_ECR_REGISTRY/$INPUT_IMAGE:$INPUT_TAG"
 latest_registry_image="$INPUT_ECR_REGISTRY/$INPUT_IMAGE:latest"
 
+setup_soci() {
+  echo "::group::Setting up soci snapshotter"
+  wget https://github.com/awslabs/soci-snapshotter/releases/download/v0.3.0/soci-snapshotter-0.3.0-linux-amd64.tar.gz
+  sudo tar -C /usr/local/bin -xvf soci-snapshotter-0.3.0-linux-amd64.tar.gz ./soci ./soci-snapshotter-grpc
+  echo "::endgroup::"
+}
+
 get_tag_version_from_latest() {
   # Try to find on ECR a tag version with the same image as :latest
   latest_tag_version=$(
@@ -48,24 +55,33 @@ compare_digest_with_latest() {
   fi
 }
 
+
+setup_soci
 echo "::group::Building new image using latest image cache"
 docker buildx build \
   --cache-to type=inline \
   --cache-from type=registry,ref="$latest_registry_image" \
-  --output type=image,compression=zstd,compression-level=3,force-compression=true,name=$tagged_registry_image,push=true \
   $INPUT_ARGS -f "$file" \
   "$INPUT_PATH";
 echo "::endgroup::"
 
-# compare_digest_with_latest
+compare_digest_with_latest
 
 echo "::group::Pushing new image to ECR"
-# docker tag "$tagged_registry_image" "$latest_registry_image"
-# docker tag "$tagged_registry_image" "$INPUT_IMAGE:latest"
-# docker push "$tagged_registry_image"
-# if [ "$INPUT_SKIP_LATEST_TAG_PUSH" != "true" ]; then
-#   docker push "$latest_registry_image"
-# fi
+docker tag "$tagged_registry_image" "$latest_registry_image"
+docker tag "$tagged_registry_image" "$INPUT_IMAGE:latest"
+docker push "$tagged_registry_image"
+if [ "$INPUT_SKIP_LATEST_TAG_PUSH" != "true" ]; then
+  docker push "$latest_registry_image"
+fi
 echo "::endgroup::"
+
+echo "::group::Creating soci index"
+ docker save "$tagged_registry_image" -o "$tagged_registry_image"
+ sudo ctr image import "$tagged_registry_image"
+ sudo soci create "$tagged_registry_image"
+ sudo soci push "$tagged_registry_image"
+echo "::endgroup::"
+
 
 set_outputs "$INPUT_IMAGE" "$INPUT_TAG"
