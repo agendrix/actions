@@ -96,7 +96,6 @@ echo "::group::Creating soci index"
  docker save "$tagged_registry_image" > image.tar
  sudo ctr image import image.tar
  sudo ctr image ls
- sudo ctr images tag image:latest "$tagged_registry_image"
  sudo soci create "$tagged_registry_image"
  sudo soci push "$tagged_registry_image"
 echo "::endgroup::"
