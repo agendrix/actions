@@ -9,6 +9,7 @@ fi
 
 tagged_registry_image="$INPUT_ECR_REGISTRY/$INPUT_IMAGE:$INPUT_TAG"
 latest_registry_image="$INPUT_ECR_REGISTRY/$INPUT_IMAGE:latest"
+cache_registry_image="$INPUT_ECR_REGISTRY/$INPUT_IMAGE:cache"
 
 setup_soci() {
   echo "::group::Setting up soci snapshotter"
@@ -58,19 +59,17 @@ compare_digest_with_latest() {
   fi
 }
 
-setup_soci
-
 latest_tag_available=$(aws ecr list-images --repository-name "$INPUT_IMAGE" | jq '.imageIds[] | select(.imageTag=="latest") | length > 0')
 if [ "$latest_tag_available" = "true" ]; then
+  # TODO: remove this code
   echo "::group::Pulling \"$INPUT_IMAGE:latest\""
   docker pull "$latest_registry_image"
   docker tag "$latest_registry_image" "$INPUT_IMAGE:latest"
   echo "::endgroup::"
-
   echo "::group::Building new image from latest image cache"
   docker buildx build \
-    --cache-to type=inline \
-    --cache-from type=registry,ref="$latest_registry_image" \
+    --cache-to type=registry,ref="$cache_registry_image",mode=max \
+    --cache-from type=registry,ref="$cache_registry_image" \
     --tag "$tagged_registry_image" \
     $INPUT_ARGS -f "$file" \
     "$INPUT_PATH";
@@ -95,14 +94,16 @@ if [ "$INPUT_SKIP_LATEST_TAG_PUSH" != "true" ]; then
 fi
 echo "::endgroup::"
 
-echo "::group::Creating soci index"
-  aws ecr get-login-password | sudo nerdctl login --username AWS --password-stdin "$INPUT_ECR_REGISTRY"
-  sudo nerdctl pull "$tagged_registry_image"
-  sudo ctr image ls
-  sudo soci create "$tagged_registry_image"
-  PASSWORD=$(aws ecr get-login-password)
-  sudo soci push --user AWS:$PASSWORD "$tagged_registry_image"
-echo "::endgroup::"
-
+if [ "$INPUT_CREATE_SOCI_INDEX" = "true" ]; then
+  setup_soci
+  echo "::group::Creating soci index"
+    aws ecr get-login-password | sudo nerdctl login --username AWS --password-stdin "$INPUT_ECR_REGISTRY"
+    sudo nerdctl pull "$tagged_registry_image"
+    sudo ctr image ls
+    sudo soci create "$tagged_registry_image"
+    PASSWORD=$(aws ecr get-login-password)
+    sudo soci push --user AWS:$PASSWORD "$tagged_registry_image"
+  echo "::endgroup::"
+fi
 
 set_outputs "$INPUT_IMAGE" "$INPUT_TAG"

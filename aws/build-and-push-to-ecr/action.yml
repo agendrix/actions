@@ -26,6 +26,11 @@ inputs:
     description: Prevent pushing the latest build to the 'image:latest' tag. If true, it will only push the 'image:tag'.
     required: false
     default: "false"
+  create_soci_index:
+    description: Create and push a SOCI index for the image. Useful to speed up the start of large images on ECS.
+    required: false
+    default: "false"
+
 outputs:
   image_uri:
     description: ECR full URI of the generated image with the selected `tag`. Cannot be consumed by job outputs.
