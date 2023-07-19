@@ -9,7 +9,6 @@ fi
 
 tagged_registry_image="$INPUT_ECR_REGISTRY/$INPUT_IMAGE:$INPUT_TAG"
 latest_registry_image="$INPUT_ECR_REGISTRY/$INPUT_IMAGE:latest"
-cache_registry_image="$INPUT_ECR_REGISTRY/$INPUT_IMAGE:cache"
 
 setup_soci() {
   echo "::group::Setting up soci snapshotter"
@@ -66,12 +65,13 @@ if [ "$latest_tag_available" = "true" ]; then
   # docker pull "$latest_registry_image"
   # docker tag "$latest_registry_image" "$INPUT_IMAGE:latest"
   # echo "::endgroup::"
+
   docker buildx create --use --name docker-container-builder
   echo "::group::Building new image from latest image cache"
   docker buildx build \
     --cache-to type=inline \
-    --cache-from type=registry,ref="$cache_registry_image" \
-    --tag "$tagged_registry_image" \
+    --cache-from type=registry,ref="$latest_registry_image" \
+    --output type=docker,dest=image.tar,name="$tagged_registry_image"
     $INPUT_ARGS -f "$file" \
     "$INPUT_PATH";
   echo "::endgroup::"
@@ -87,6 +87,7 @@ else
 fi
 
 echo "::group::Pushing new image to ECR"
+docker load --input image.tar
 docker tag "$tagged_registry_image" "$latest_registry_image"
 docker tag "$tagged_registry_image" "$INPUT_IMAGE:latest"
 docker push "$tagged_registry_image"
@@ -99,8 +100,7 @@ if [ "$INPUT_CREATE_SOCI_INDEX" = "true" ]; then
   setup_soci
   echo "::group::Creating soci index"
     aws ecr get-login-password | sudo nerdctl login --username AWS --password-stdin "$INPUT_ECR_REGISTRY"
-    sudo nerdctl pull "$tagged_registry_image"
-    sudo ctr image ls
+    sudo nerdctl load --input image.tar
     sudo soci create "$tagged_registry_image"
     PASSWORD=$(aws ecr get-login-password)
     sudo soci push --user AWS:$PASSWORD "$tagged_registry_image"
