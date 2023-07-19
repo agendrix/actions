@@ -71,7 +71,7 @@ if [ "$latest_tag_available" = "true" ]; then
   docker buildx build \
     --cache-to type=inline \
     --cache-from type=registry,ref="$latest_registry_image" \
-    --output type=oci,dest=image.tar,name="$tagged_registry_image" \
+    --output type=docker,dest=image.tar,name="$tagged_registry_image" \
     $INPUT_ARGS -f "$file" \
     "$INPUT_PATH";
   echo "::endgroup::"
@@ -101,6 +101,7 @@ if [ "$INPUT_CREATE_SOCI_INDEX" = "true" ]; then
   echo "::group::Creating soci index"
     aws ecr get-login-password | sudo nerdctl login --username AWS --password-stdin "$INPUT_ECR_REGISTRY"
     sudo nerdctl load --input image.tar
+    sudo nerdctl convert --oci "$tagged_registry_image" "$tagged_registry_image"
     sudo soci create "$tagged_registry_image"
     PASSWORD=$(aws ecr get-login-password)
     sudo soci push --user AWS:$PASSWORD "$tagged_registry_image"
