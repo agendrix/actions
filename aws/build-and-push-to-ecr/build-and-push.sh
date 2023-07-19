@@ -82,6 +82,7 @@ if [ "$latest_tag_available" = "true" ]; then
     $INPUT_ARGS -f "$file" \
     "$INPUT_PATH";
   echo "::endgroup::"
+  docker buildx rm docker-container-builder
 
   # compare_digest_with_latest
 else
