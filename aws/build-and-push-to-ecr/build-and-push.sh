@@ -77,8 +77,8 @@ if [ "$latest_tag_available" = "true" ]; then
   echo "::group::Building new image from latest image cache"
   docker buildx build \
     --cache-to type=inline \
-    --cache-from type=registry,ref="$INPUT_ECR_REGISTRY/$INPUT_IMAGE:bee497e" \
-    --output type=oci,dest=image.tar,name="$tagged_registry_image",compression=gzip \
+    --cache-from type=registry,ref="$INPUT_ECR_REGISTRY/$INPUT_IMAGE:latest" \
+    --output type=oci,dest=image.tar,name="$tagged_registry_image" \
     $INPUT_ARGS -f "$file" \
     "$INPUT_PATH";
   echo "::endgroup::"
