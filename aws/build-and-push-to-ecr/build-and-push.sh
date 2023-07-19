@@ -71,7 +71,7 @@ if [ "$latest_tag_available" = "true" ]; then
   docker buildx build \
     --cache-to type=inline \
     --cache-from type=registry,ref="$latest_registry_image" \
-    --output type=docker,dest=image.tar,name="$tagged_registry_image" \
+    --output type=oci,dest=image.tar,name="$tagged_registry_image" \
     $INPUT_ARGS -f "$file" \
     "$INPUT_PATH";
   echo "::endgroup::"
