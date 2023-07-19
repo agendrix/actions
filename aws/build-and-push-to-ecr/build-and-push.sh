@@ -104,7 +104,7 @@ if [ "$INPUT_CREATE_SOCI_INDEX" = "true" ]; then
     sudo nerdctl image convert --oci "$tagged_registry_image" "$tagged_registry_image-oci"
     sudo soci create "$tagged_registry_image-oci"
     PASSWORD=$(aws ecr get-login-password)
-    sudo soci push --user AWS:$PASSWORD "$tagged_registry_image"
+    sudo soci push --user AWS:$PASSWORD "$tagged_registry_image-oci"
   echo "::endgroup::"
 fi
 
