@@ -69,7 +69,7 @@ if [ "$latest_tag_available" = "true" ]; then
   docker buildx create --use --name docker-container-builder
   echo "::group::Building new image from latest image cache"
   docker buildx build \
-    --cache-to type=registry,ref="$cache_registry_image",mode=max \
+    --cache-to type=inline \
     --cache-from type=registry,ref="$cache_registry_image" \
     --tag "$tagged_registry_image" \
     $INPUT_ARGS -f "$file" \
