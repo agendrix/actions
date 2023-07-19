@@ -44,6 +44,8 @@ set_outputs() {
   } >> "$GITHUB_OUTPUT"
 }
 
+setup_nerdctl
+
 compare_digest_with_latest() {
   # Compare the digests. If they are the same, check if a tag version already exists on ECR with that image, and return this one.
   latest_image_digest=$(docker inspect --format='{{.RootFS}}' "$latest_registry_image")
