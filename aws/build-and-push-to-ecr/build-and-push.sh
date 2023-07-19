@@ -102,7 +102,8 @@ if [ "$INPUT_CREATE_SOCI_INDEX" = "true" ]; then
     aws ecr get-login-password | sudo nerdctl login --username AWS --password-stdin "$INPUT_ECR_REGISTRY"
     sudo nerdctl load --input image.tar
     sudo nerdctl image convert --oci "$tagged_registry_image" "$tagged_registry_image-oci"
-    sudo soci create "$tagged_registry_image-oci"
+    # TODO: revert min-layer-size 
+    sudo soci create --min-layer-size 1 "$tagged_registry_image-oci"
     PASSWORD=$(aws ecr get-login-password)
     sudo soci push --user AWS:$PASSWORD "$tagged_registry_image"
   echo "::endgroup::"
