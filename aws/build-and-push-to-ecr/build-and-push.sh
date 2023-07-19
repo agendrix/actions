@@ -62,10 +62,11 @@ compare_digest_with_latest() {
 latest_tag_available=$(aws ecr list-images --repository-name "$INPUT_IMAGE" | jq '.imageIds[] | select(.imageTag=="latest") | length > 0')
 if [ "$latest_tag_available" = "true" ]; then
   # TODO: remove this code
-  echo "::group::Pulling \"$INPUT_IMAGE:latest\""
-  docker pull "$latest_registry_image"
-  docker tag "$latest_registry_image" "$INPUT_IMAGE:latest"
-  echo "::endgroup::"
+  # echo "::group::Pulling \"$INPUT_IMAGE:latest\""
+  # docker pull "$latest_registry_image"
+  # docker tag "$latest_registry_image" "$INPUT_IMAGE:latest"
+  # echo "::endgroup::"
+  docker buildx create --use --name docker-container-builder
   echo "::group::Building new image from latest image cache"
   docker buildx build \
     --cache-to type=registry,ref="$cache_registry_image",mode=max \
@@ -75,7 +76,7 @@ if [ "$latest_tag_available" = "true" ]; then
     "$INPUT_PATH";
   echo "::endgroup::"
 
-  compare_digest_with_latest
+  # compare_digest_with_latest
 else
   echo "::group::Building new image"
   docker build \
