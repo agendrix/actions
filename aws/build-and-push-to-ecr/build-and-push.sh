@@ -56,12 +56,14 @@ if [ "$latest_tag_available" = "true" ]; then
   # echo "::endgroup::"
 
   echo "::group::Building new image from latest image cache"
+  docker buildx create --use --name "docker-container-driver"
   docker buildx build \
     --cache-from "$latest_registry_image" \
     --output type=image,\"name=$tagged_registry_image,$latest_registry_image\",oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true,push=true \
     $INPUT_ARGS -f "$file" \
     "$INPUT_PATH";
   echo "::endgroup::"
+  docker buildx rm "docker-container-driver"
 
   # compare_digest_with_latest
 else
