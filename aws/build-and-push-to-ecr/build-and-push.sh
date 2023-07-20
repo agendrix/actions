@@ -50,20 +50,21 @@ compare_digest_with_latest() {
 
 latest_tag_available=$(aws ecr list-images --repository-name "$INPUT_IMAGE" | jq '.imageIds[] | select(.imageTag=="latest") | length > 0')
 if [ "$latest_tag_available" = "true" ]; then
-  echo "::group::Pulling \"$INPUT_IMAGE:latest\""
-  docker pull "$latest_registry_image"
-  docker tag "$latest_registry_image" "$INPUT_IMAGE:latest"
-  echo "::endgroup::"
+  # echo "::group::Pulling \"$INPUT_IMAGE:latest\""
+  # docker pull "$latest_registry_image"
+  # docker tag "$latest_registry_image" "$INPUT_IMAGE:latest"
+  # echo "::endgroup::"
 
   echo "::group::Building new image from latest image cache"
-  docker build \
-    --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from "$latest_registry_image" \
+  docker buildx build \
+    --cache-from "$latest_registry_image" \
+    --output type=image,\"name=$tagged_registry_image,$latest_registry_image\",oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true,push=true .
     --tag "$tagged_registry_image" \
     $INPUT_ARGS -f "$file" \
     "$INPUT_PATH";
   echo "::endgroup::"
 
-  compare_digest_with_latest
+  # compare_digest_with_latest
 else
   echo "::group::Building new image"
   docker build \
@@ -73,13 +74,13 @@ else
   echo "::endgroup::"
 fi
 
-echo "::group::Pushing new image to ECR"
-docker tag "$tagged_registry_image" "$latest_registry_image"
-docker tag "$tagged_registry_image" "$INPUT_IMAGE:latest"
-docker push "$tagged_registry_image"
-if [ "$INPUT_SKIP_LATEST_TAG_PUSH" != "true" ]; then
-  docker push "$latest_registry_image"
-fi
-echo "::endgroup::"
+# echo "::group::Pushing new image to ECR"
+# docker tag "$tagged_registry_image" "$latest_registry_image"
+# docker tag "$tagged_registry_image" "$INPUT_IMAGE:latest"
+# docker push "$tagged_registry_image"
+# if [ "$INPUT_SKIP_LATEST_TAG_PUSH" != "true" ]; then
+#   docker push "$latest_registry_image"
+# fi
+# echo "::endgroup::"
 
 set_outputs "$INPUT_IMAGE" "$INPUT_TAG"
