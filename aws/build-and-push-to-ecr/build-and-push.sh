@@ -100,7 +100,7 @@ sudo nerdctl image tag "$tagged_registry_image" "$latest_registry_image"
 sudo nerdctl image tag "$tagged_registry_image" "$INPUT_IMAGE:latest"
 sudo nerdctl push "$tagged_registry_image"
 if [ "$INPUT_SKIP_LATEST_TAG_PUSH" != "true" ]; then
-  docker push "$latest_registry_image"
+  sudo nerdctl push "$latest_registry_image"
 fi
 echo "::endgroup::"
 
