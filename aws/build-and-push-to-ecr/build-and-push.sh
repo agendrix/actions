@@ -57,7 +57,9 @@ if [ "$latest_tag_available" = "true" ]; then
 
   echo "::group::Building new image from latest image cache"
   docker build \
-    --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from "$latest_registry_image" \
+    --build-arg BUILDKIT_INLINE_CACHE=1 \
+    --build-arg REGISTRY=$INPUT_ECR_REGISTRY \
+    --cache-from "$latest_registry_image" \
     --tag "$tagged_registry_image" \
     $INPUT_ARGS -f "$file" \
     "$INPUT_PATH";
