@@ -5,7 +5,7 @@ set -e
 eval $(ssh-agent)
 
 # Add key to ssh-agent
-echo "${SSH_KEY}" | ssh-add -
+echo "::add-mask::${SSH_KEY}" | ssh-add -
 
 echo "SSH_KEY<<EOF" >> "$GITHUB_STATE"
 echo "$SSH_KEY" >> "$GITHUB_STATE"
