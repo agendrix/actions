@@ -1,7 +1,7 @@
 // @ts-nocheck
 const fs = require("fs");
 const yaml = require("js-yaml");
-const ncc = require("@zeit/ncc");
+const ncc = require("@vercel/ncc");
 const path = require("path");
 
 let diffs = undefined;
